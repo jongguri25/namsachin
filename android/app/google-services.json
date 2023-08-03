@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "762613373677",
+    "project_id": "livetest2-a26ab",
+    "storage_bucket": "livetest2-a26ab.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:762613373677:android:cb67cedca09d2064f44ae4",
+        "android_client_info": {
+          "package_name": "com.mycompany.livetest2"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "762613373677-4fv878h68pd4cq0ept0i1iqjbq2lril9.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCexT4receu-ufpZY4vW-JbD0FahI-d67s"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "762613373677-4fv878h68pd4cq0ept0i1iqjbq2lril9.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "762613373677-p55hnremn41ftmc1pejl856g29d1podd.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.mycompany.livetest2"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
