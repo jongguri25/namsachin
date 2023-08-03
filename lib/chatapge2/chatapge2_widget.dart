@@ -36,6 +36,8 @@ class _Chatapge2WidgetState extends State<Chatapge2Widget> {
   late Chatapge2Model _model;
 
   final scaffoldKey = GlobalKey<ScaffoldState>();
+  ScrollController _scrollController = ScrollController();
+
 
   @override
   void initState() {
@@ -178,6 +180,7 @@ class _Chatapge2WidgetState extends State<Chatapge2Widget> {
                                           padding: EdgeInsets.zero,
                                           primary: false,
                                           shrinkWrap: true,
+                                          controller: _scrollController,
                                           scrollDirection: Axis.vertical,
                                           itemCount:
                                               listViewChatMessagesRecordList
@@ -908,6 +911,7 @@ class _Chatapge2WidgetState extends State<Chatapge2Widget> {
                                                         FieldValue
                                                             .serverTimestamp(),
                                                   });
+                                                  _scrollController.animateTo(_scrollController.position.maxScrollExtent, duration: Duration(milliseconds: 300), curve: Curves.easeOut);
                                                 } else {
                                                   ScaffoldMessenger.of(context)
                                                       .showSnackBar(
