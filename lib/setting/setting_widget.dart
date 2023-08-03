@@ -1969,6 +1969,54 @@ class _SettingWidgetState extends State<SettingWidget>
                             ),
                           ),
                         ),
+                        Align(
+                          alignment: AlignmentDirectional(0.0, 0.05),
+                          child: Padding(
+                            padding: EdgeInsetsDirectional.fromSTEB(
+                                0.0, 12.0, 0.0, 0.0),
+                            child: FFButtonWidget(
+                              onPressed: () async {
+                                await currentUserReference!.delete();
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text(
+                                      '계정이 삭제되었습니다',
+                                      style: TextStyle(
+                                        color: FlutterFlowTheme.of(context)
+                                            .primaryText,
+                                      ),
+                                    ),
+                                    duration: Duration(milliseconds: 4000),
+                                    backgroundColor:
+                                        FlutterFlowTheme.of(context).secondary,
+                                  ),
+                                );
+                              },
+                              text: '탈퇴',
+                              options: FFButtonOptions(
+                                width: 270.0,
+                                height: 50.0,
+                                padding: EdgeInsetsDirectional.fromSTEB(
+                                    0.0, 0.0, 0.0, 0.0),
+                                iconPadding: EdgeInsetsDirectional.fromSTEB(
+                                    0.0, 0.0, 0.0, 0.0),
+                                color: Colors.white,
+                                textStyle: FlutterFlowTheme.of(context)
+                                    .titleMedium
+                                    .override(
+                                      fontFamily: 'Open Sans',
+                                      color: Color(0xFFD5D5D5),
+                                      fontSize: 12.0,
+                                    ),
+                                elevation: 0.0,
+                                borderSide: BorderSide(
+                                  width: 0.0,
+                                ),
+                                borderRadius: BorderRadius.circular(12.0),
+                              ),
+                            ),
+                          ),
+                        ),
                       ],
                     ),
                   ],

@@ -36,8 +36,6 @@ class _Chatapge2WidgetState extends State<Chatapge2Widget> {
   late Chatapge2Model _model;
 
   final scaffoldKey = GlobalKey<ScaffoldState>();
-  ScrollController _scrollController = ScrollController();
-
 
   @override
   void initState() {
@@ -180,7 +178,6 @@ class _Chatapge2WidgetState extends State<Chatapge2Widget> {
                                           padding: EdgeInsets.zero,
                                           primary: false,
                                           shrinkWrap: true,
-                                          controller: _scrollController,
                                           scrollDirection: Axis.vertical,
                                           itemCount:
                                               listViewChatMessagesRecordList
@@ -911,7 +908,6 @@ class _Chatapge2WidgetState extends State<Chatapge2Widget> {
                                                         FieldValue
                                                             .serverTimestamp(),
                                                   });
-                                                  _scrollController.animateTo(_scrollController.position.maxScrollExtent, duration: Duration(milliseconds: 300), curve: Curves.easeOut);
                                                 } else {
                                                   ScaffoldMessenger.of(context)
                                                       .showSnackBar(
@@ -933,6 +929,34 @@ class _Chatapge2WidgetState extends State<Chatapge2Widget> {
                                                     ),
                                                   );
                                                 }
+
+                                                await Future.delayed(
+                                                    const Duration(
+                                                        milliseconds: 5000));
+                                                await _model.listViewController
+                                                    ?.animateTo(
+                                                  _model.listViewController!
+                                                      .position.maxScrollExtent,
+                                                  duration: Duration(
+                                                      milliseconds: 5000),
+                                                  curve: Curves.ease,
+                                                );
+                                                await _model.columnController
+                                                    ?.animateTo(
+                                                  _model.columnController!
+                                                      .position.maxScrollExtent,
+                                                  duration: Duration(
+                                                      milliseconds: 5000),
+                                                  curve: Curves.ease,
+                                                );
+                                                await _model.rowController
+                                                    ?.animateTo(
+                                                  _model.rowController!.position
+                                                      .maxScrollExtent,
+                                                  duration: Duration(
+                                                      milliseconds: 5000),
+                                                  curve: Curves.ease,
+                                                );
 
                                                 setState(() {});
                                               },
