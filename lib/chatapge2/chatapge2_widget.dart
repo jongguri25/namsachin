@@ -1,18 +1,26 @@
+import 'dart:async';
+
+import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
+import 'package:provider/provider.dart';
+
 import '/auth/firebase_auth/auth_util.dart';
 import '/backend/api_requests/api_calls.dart';
 import '/backend/backend.dart';
 import '/flutter_flow/flutter_flow_icon_button.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:provider/provider.dart';
 import 'chatapge2_model.dart';
+
 export 'chatapge2_model.dart';
 
 class Chatapge2Widget extends StatefulWidget {
+  final DocumentReference? character;
+
+  final DocumentReference? chat;
+  final String? characterProfile;
+  final String? characterName;
+  final String? prompt;
   const Chatapge2Widget({
     Key? key,
     required this.character,
@@ -22,12 +30,6 @@ class Chatapge2Widget extends StatefulWidget {
     required this.prompt,
   }) : super(key: key);
 
-  final DocumentReference? character;
-  final DocumentReference? chat;
-  final String? characterProfile;
-  final String? characterName;
-  final String? prompt;
-
   @override
   _Chatapge2WidgetState createState() => _Chatapge2WidgetState();
 }
@@ -36,30 +38,6 @@ class _Chatapge2WidgetState extends State<Chatapge2Widget> {
   late Chatapge2Model _model;
 
   final scaffoldKey = GlobalKey<ScaffoldState>();
-
-  @override
-  void initState() {
-    super.initState();
-    _model = createModel(context, () => Chatapge2Model());
-
-    // On page load action.
-    SchedulerBinding.instance.addPostFrameCallback((_) async {
-      await _model.listViewController?.animateTo(
-        _model.listViewController!.position.maxScrollExtent,
-        duration: Duration(milliseconds: 0),
-        curve: Curves.ease,
-      );
-    });
-
-    _model.fullNameController ??= TextEditingController();
-  }
-
-  @override
-  void dispose() {
-    _model.dispose();
-
-    super.dispose();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -354,7 +332,9 @@ class _Chatapge2WidgetState extends State<Chatapge2Widget> {
                                                                     dateTimeFormat(
                                                                       'relative',
                                                                       listViewChatMessagesRecord
-                                                                          .timestamp!,
+                                                                              .timestamp ??
+                                                                          DateTime
+                                                                              .now(),
                                                                       locale: FFLocalizations.of(
                                                                               context)
                                                                           .languageCode,
@@ -377,11 +357,8 @@ class _Chatapge2WidgetState extends State<Chatapge2Widget> {
                                                               ],
                                                             ),
                                                             if (listViewChatMessagesRecord
-                                                                        .image !=
-                                                                    null &&
-                                                                listViewChatMessagesRecord
-                                                                        .image !=
-                                                                    '')
+                                                                    .image !=
+                                                                '')
                                                               Padding(
                                                                 padding: EdgeInsetsDirectional
                                                                     .fromSTEB(
@@ -475,7 +452,9 @@ class _Chatapge2WidgetState extends State<Chatapge2Widget> {
                                                                   dateTimeFormat(
                                                                     'relative',
                                                                     listViewChatMessagesRecord
-                                                                        .timestamp!,
+                                                                            .timestamp ??
+                                                                        DateTime
+                                                                            .now(),
                                                                     locale: FFLocalizations.of(
                                                                             context)
                                                                         .languageCode,
@@ -809,6 +788,7 @@ class _Chatapge2WidgetState extends State<Chatapge2Widget> {
                                                   'timestamp': FieldValue
                                                       .serverTimestamp(),
                                                 });
+
                                                 _model.createUserMessage =
                                                     ChatMessagesRecord
                                                         .getDocumentFromData({
@@ -829,6 +809,9 @@ class _Chatapge2WidgetState extends State<Chatapge2Widget> {
                                                   _model.fullNameController
                                                       ?.clear();
                                                 });
+
+                                                _scrollDown();
+
                                                 _model.apiResult94f =
                                                     await ClovaCall.call(
                                                   text: _model.createUserMessage
@@ -930,33 +913,7 @@ class _Chatapge2WidgetState extends State<Chatapge2Widget> {
                                                   );
                                                 }
 
-                                                await Future.delayed(
-                                                    const Duration(
-                                                        milliseconds: 5000));
-                                                await _model.listViewController
-                                                    ?.animateTo(
-                                                  _model.listViewController!
-                                                      .position.maxScrollExtent,
-                                                  duration: Duration(
-                                                      milliseconds: 5000),
-                                                  curve: Curves.ease,
-                                                );
-                                                await _model.columnController
-                                                    ?.animateTo(
-                                                  _model.columnController!
-                                                      .position.maxScrollExtent,
-                                                  duration: Duration(
-                                                      milliseconds: 5000),
-                                                  curve: Curves.ease,
-                                                );
-                                                await _model.rowController
-                                                    ?.animateTo(
-                                                  _model.rowController!.position
-                                                      .maxScrollExtent,
-                                                  duration: Duration(
-                                                      milliseconds: 5000),
-                                                  curve: Curves.ease,
-                                                );
+                                                _scrollDown();
 
                                                 setState(() {});
                                               },
@@ -980,5 +937,53 @@ class _Chatapge2WidgetState extends State<Chatapge2Widget> {
         );
       },
     );
+  }
+
+  @override
+  void dispose() {
+    _model.dispose();
+
+    super.dispose();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _model = createModel(context, () => Chatapge2Model());
+
+    // On page load action.
+    SchedulerBinding.instance.addPostFrameCallback((_) async {
+      await _model.listViewController?.animateTo(
+        _model.listViewController!.position.maxScrollExtent,
+        duration: Duration(milliseconds: 0),
+        curve: Curves.ease,
+      );
+    });
+
+    _model.fullNameController ??= TextEditingController();
+  }
+
+  void _scrollDown() async {
+    await Future.delayed(const Duration(milliseconds: 1));
+    await _model.listViewController?.animateTo(
+      _model.listViewController!.position.maxScrollExtent,
+      duration: Duration(milliseconds: 1),
+      curve: Curves.ease,
+    );
+    await _model.columnController?.animateTo(
+      _model.columnController!.position.maxScrollExtent,
+      duration: Duration(milliseconds: 1),
+      curve: Curves.ease,
+    );
+    await _model.rowController?.animateTo(
+      _model.rowController!.position.maxScrollExtent,
+      duration: Duration(milliseconds: 1),
+      curve: Curves.ease,
+    );
+
+    Timer(Duration(milliseconds: 0), () {
+      _model.listViewController!
+          .jumpTo(_model.listViewController!.position.maxScrollExtent);
+    });
   }
 }
