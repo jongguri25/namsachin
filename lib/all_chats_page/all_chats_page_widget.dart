@@ -25,6 +25,8 @@ class _AllChatsPageWidgetState extends State<AllChatsPageWidget> {
   void initState() {
     super.initState();
     _model = createModel(context, () => AllChatsPageModel());
+
+    WidgetsBinding.instance.addPostFrameCallback((_) => setState(() {}));
   }
 
   @override
@@ -73,7 +75,7 @@ class _AllChatsPageWidgetState extends State<AllChatsPageWidget> {
                   image: DecorationImage(
                     fit: BoxFit.cover,
                     image: Image.asset(
-                      'assets/images/e61b4fd114be442c9e893028fbd37d96.jpg',
+                      'assets/images/Frame_105.png',
                     ).image,
                   ),
                   borderRadius: BorderRadius.circular(12.0),

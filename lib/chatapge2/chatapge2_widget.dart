@@ -1,26 +1,18 @@
-import 'dart:async';
-
-import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
-import 'package:provider/provider.dart';
-
 import '/auth/firebase_auth/auth_util.dart';
 import '/backend/api_requests/api_calls.dart';
 import '/backend/backend.dart';
 import '/flutter_flow/flutter_flow_icon_button.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
 import 'chatapge2_model.dart';
-
 export 'chatapge2_model.dart';
 
 class Chatapge2Widget extends StatefulWidget {
-  final DocumentReference? character;
-
-  final DocumentReference? chat;
-  final String? characterProfile;
-  final String? characterName;
-  final String? prompt;
   const Chatapge2Widget({
     Key? key,
     required this.character,
@@ -30,6 +22,12 @@ class Chatapge2Widget extends StatefulWidget {
     required this.prompt,
   }) : super(key: key);
 
+  final DocumentReference? character;
+  final DocumentReference? chat;
+  final String? characterProfile;
+  final String? characterName;
+  final String? prompt;
+
   @override
   _Chatapge2WidgetState createState() => _Chatapge2WidgetState();
 }
@@ -38,6 +36,31 @@ class _Chatapge2WidgetState extends State<Chatapge2Widget> {
   late Chatapge2Model _model;
 
   final scaffoldKey = GlobalKey<ScaffoldState>();
+
+  @override
+  void initState() {
+    super.initState();
+    _model = createModel(context, () => Chatapge2Model());
+
+    // On page load action.
+    SchedulerBinding.instance.addPostFrameCallback((_) async {
+      await _model.listViewController?.animateTo(
+        _model.listViewController!.position.maxScrollExtent,
+        duration: Duration(milliseconds: 0),
+        curve: Curves.ease,
+      );
+    });
+
+    _model.fullNameController ??= TextEditingController();
+    WidgetsBinding.instance.addPostFrameCallback((_) => setState(() {}));
+  }
+
+  @override
+  void dispose() {
+    _model.dispose();
+
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -332,9 +355,7 @@ class _Chatapge2WidgetState extends State<Chatapge2Widget> {
                                                                     dateTimeFormat(
                                                                       'relative',
                                                                       listViewChatMessagesRecord
-                                                                              .timestamp ??
-                                                                          DateTime
-                                                                              .now(),
+                                                                          .timestamp!,
                                                                       locale: FFLocalizations.of(
                                                                               context)
                                                                           .languageCode,
@@ -357,8 +378,11 @@ class _Chatapge2WidgetState extends State<Chatapge2Widget> {
                                                               ],
                                                             ),
                                                             if (listViewChatMessagesRecord
-                                                                    .image !=
-                                                                '')
+                                                                        .image !=
+                                                                    null &&
+                                                                listViewChatMessagesRecord
+                                                                        .image !=
+                                                                    '')
                                                               Padding(
                                                                 padding: EdgeInsetsDirectional
                                                                     .fromSTEB(
@@ -452,9 +476,7 @@ class _Chatapge2WidgetState extends State<Chatapge2Widget> {
                                                                   dateTimeFormat(
                                                                     'relative',
                                                                     listViewChatMessagesRecord
-                                                                            .timestamp ??
-                                                                        DateTime
-                                                                            .now(),
+                                                                        .timestamp!,
                                                                     locale: FFLocalizations.of(
                                                                             context)
                                                                         .languageCode,
@@ -746,180 +768,196 @@ class _Chatapge2WidgetState extends State<Chatapge2Widget> {
                                   child: Row(
                                     mainAxisSize: MainAxisSize.max,
                                     children: [
-                                      if (_model.fullNameController.text != '')
-                                        Align(
-                                          alignment:
-                                              AlignmentDirectional(0.0, 1.0),
-                                          child: Padding(
-                                            padding:
-                                                EdgeInsetsDirectional.fromSTEB(
-                                                    8.0, 8.0, 8.0, 8.0),
-                                            child: FlutterFlowIconButton(
-                                              borderColor: Color(0xFFFFE302),
-                                              borderRadius: 30.0,
-                                              borderWidth: 3.0,
-                                              buttonSize: 45.0,
-                                              fillColor: Color(0xFFFFE302),
-                                              icon: Icon(
-                                                Icons.arrow_upward_sharp,
-                                                color: Colors.black,
-                                                size: 30.0,
-                                              ),
-                                              onPressed: () async {
-                                                // createUserMessage
+                                      Align(
+                                        alignment:
+                                            AlignmentDirectional(0.0, 1.0),
+                                        child: Padding(
+                                          padding:
+                                              EdgeInsetsDirectional.fromSTEB(
+                                                  8.0, 8.0, 8.0, 8.0),
+                                          child: FlutterFlowIconButton(
+                                            borderColor: Color(0xFFFFE302),
+                                            borderRadius: 30.0,
+                                            borderWidth: 3.0,
+                                            buttonSize: 45.0,
+                                            fillColor: Color(0xFFFFE302),
+                                            icon: Icon(
+                                              Icons.arrow_upward_sharp,
+                                              color: Colors.black,
+                                              size: 30.0,
+                                            ),
+                                            onPressed: () async {
+                                              // createUserMessage
 
-                                                var chatMessagesRecordReference1 =
+                                              var chatMessagesRecordReference1 =
+                                                  ChatMessagesRecord.collection
+                                                      .doc();
+                                              await chatMessagesRecordReference1
+                                                  .set({
+                                                ...createChatMessagesRecordData(
+                                                  user: currentUserReference,
+                                                  chat: widget.chat,
+                                                  text: _model
+                                                      .fullNameController.text,
+                                                  ai: false,
+                                                  nextPrompt:
+                                                      '${widget.prompt} \\n상대방 : ${_model.fullNameController.text} \\n남사친 :',
+                                                  image: '',
+                                                ),
+                                                'timestamp': FieldValue
+                                                    .serverTimestamp(),
+                                              });
+                                              _model.createUserMessage =
+                                                  ChatMessagesRecord
+                                                      .getDocumentFromData({
+                                                ...createChatMessagesRecordData(
+                                                  user: currentUserReference,
+                                                  chat: widget.chat,
+                                                  text: _model
+                                                      .fullNameController.text,
+                                                  ai: false,
+                                                  nextPrompt:
+                                                      '${widget.prompt} \\n상대방 : ${_model.fullNameController.text} \\n남사친 :',
+                                                  image: '',
+                                                ),
+                                                'timestamp': DateTime.now(),
+                                              }, chatMessagesRecordReference1);
+                                              setState(() {
+                                                _model.fullNameController
+                                                    ?.clear();
+                                              });
+                                              _model.apiResult94f =
+                                                  await ClovaCall.call(
+                                                text: _model.createUserMessage
+                                                    ?.nextPrompt,
+                                              );
+                                              if ((_model.apiResult94f
+                                                      ?.succeeded ??
+                                                  true)) {
+                                                // createAIMessage
+
+                                                var chatMessagesRecordReference2 =
                                                     ChatMessagesRecord
                                                         .collection
                                                         .doc();
-                                                await chatMessagesRecordReference1
+                                                await chatMessagesRecordReference2
                                                     .set({
                                                   ...createChatMessagesRecordData(
                                                     user: currentUserReference,
                                                     chat: widget.chat,
-                                                    text: _model
-                                                        .fullNameController
-                                                        .text,
-                                                    ai: false,
+                                                    text: getJsonField(
+                                                      (_model.apiResult94f
+                                                              ?.jsonBody ??
+                                                          ''),
+                                                      r'''$.result.outputText''',
+                                                    ).toString(),
+                                                    ai: true,
                                                     nextPrompt:
-                                                        '${widget.prompt} \\n상대방 : ${_model.fullNameController.text} \\n남사친 :',
+                                                        '${_model.createUserMessage?.nextPrompt}${getJsonField(
+                                                      (_model.apiResult94f
+                                                              ?.jsonBody ??
+                                                          ''),
+                                                      r'''$.result.outputText''',
+                                                    ).toString()}',
                                                     image: '',
                                                   ),
                                                   'timestamp': FieldValue
                                                       .serverTimestamp(),
                                                 });
-
-                                                _model.createUserMessage =
+                                                _model.createAIMessage =
                                                     ChatMessagesRecord
                                                         .getDocumentFromData({
                                                   ...createChatMessagesRecordData(
                                                     user: currentUserReference,
                                                     chat: widget.chat,
-                                                    text: _model
-                                                        .fullNameController
-                                                        .text,
-                                                    ai: false,
+                                                    text: getJsonField(
+                                                      (_model.apiResult94f
+                                                              ?.jsonBody ??
+                                                          ''),
+                                                      r'''$.result.outputText''',
+                                                    ).toString(),
+                                                    ai: true,
                                                     nextPrompt:
-                                                        '${widget.prompt} \\n상대방 : ${_model.fullNameController.text} \\n남사친 :',
+                                                        '${_model.createUserMessage?.nextPrompt}${getJsonField(
+                                                      (_model.apiResult94f
+                                                              ?.jsonBody ??
+                                                          ''),
+                                                      r'''$.result.outputText''',
+                                                    ).toString()}',
                                                     image: '',
                                                   ),
                                                   'timestamp': DateTime.now(),
-                                                }, chatMessagesRecordReference1);
-                                                setState(() {
-                                                  _model.fullNameController
-                                                      ?.clear();
+                                                }, chatMessagesRecordReference2);
+                                                // updateChat
+
+                                                await widget.chat!.update({
+                                                  ...createChatsRecordData(
+                                                    lastMessage: _model
+                                                        .createAIMessage?.text,
+                                                    prompt: _model
+                                                        .createAIMessage
+                                                        ?.nextPrompt,
+                                                  ),
+                                                  'last_message_time':
+                                                      FieldValue
+                                                          .serverTimestamp(),
                                                 });
-
-                                                _scrollDown();
-
-                                                _model.apiResult94f =
-                                                    await ClovaCall.call(
-                                                  text: _model.createUserMessage
-                                                      ?.nextPrompt,
-                                                );
-                                                if ((_model.apiResult94f
-                                                        ?.succeeded ??
-                                                    true)) {
-                                                  // createAIMessage
-
-                                                  var chatMessagesRecordReference2 =
-                                                      ChatMessagesRecord
-                                                          .collection
-                                                          .doc();
-                                                  await chatMessagesRecordReference2
-                                                      .set({
-                                                    ...createChatMessagesRecordData(
-                                                      user:
-                                                          currentUserReference,
-                                                      chat: widget.chat,
-                                                      text: getJsonField(
-                                                        (_model.apiResult94f
-                                                                ?.jsonBody ??
-                                                            ''),
-                                                        r'''$.result.outputText''',
-                                                      ).toString(),
-                                                      ai: true,
-                                                      nextPrompt:
-                                                          '${_model.createUserMessage?.nextPrompt}${getJsonField(
-                                                        (_model.apiResult94f
-                                                                ?.jsonBody ??
-                                                            ''),
-                                                        r'''$.result.outputText''',
-                                                      ).toString()}',
-                                                      image: '',
-                                                    ),
-                                                    'timestamp': FieldValue
-                                                        .serverTimestamp(),
-                                                  });
-                                                  _model.createAIMessage =
-                                                      ChatMessagesRecord
-                                                          .getDocumentFromData({
-                                                    ...createChatMessagesRecordData(
-                                                      user:
-                                                          currentUserReference,
-                                                      chat: widget.chat,
-                                                      text: getJsonField(
-                                                        (_model.apiResult94f
-                                                                ?.jsonBody ??
-                                                            ''),
-                                                        r'''$.result.outputText''',
-                                                      ).toString(),
-                                                      ai: true,
-                                                      nextPrompt:
-                                                          '${_model.createUserMessage?.nextPrompt}${getJsonField(
-                                                        (_model.apiResult94f
-                                                                ?.jsonBody ??
-                                                            ''),
-                                                        r'''$.result.outputText''',
-                                                      ).toString()}',
-                                                      image: '',
-                                                    ),
-                                                    'timestamp': DateTime.now(),
-                                                  }, chatMessagesRecordReference2);
-                                                  // updateChat
-
-                                                  await widget.chat!.update({
-                                                    ...createChatsRecordData(
-                                                      lastMessage: _model
-                                                          .createAIMessage
-                                                          ?.text,
-                                                      prompt: _model
-                                                          .createAIMessage
-                                                          ?.nextPrompt,
-                                                    ),
-                                                    'last_message_time':
-                                                        FieldValue
-                                                            .serverTimestamp(),
-                                                  });
-                                                } else {
-                                                  ScaffoldMessenger.of(context)
-                                                      .showSnackBar(
-                                                    SnackBar(
-                                                      content: Text(
-                                                        'error',
-                                                        style: TextStyle(
-                                                          color: FlutterFlowTheme
-                                                                  .of(context)
-                                                              .primaryText,
-                                                        ),
+                                              } else {
+                                                ScaffoldMessenger.of(context)
+                                                    .showSnackBar(
+                                                  SnackBar(
+                                                    content: Text(
+                                                      'error',
+                                                      style: TextStyle(
+                                                        color:
+                                                            FlutterFlowTheme.of(
+                                                                    context)
+                                                                .primaryText,
                                                       ),
-                                                      duration: Duration(
-                                                          milliseconds: 4000),
-                                                      backgroundColor:
-                                                          FlutterFlowTheme.of(
-                                                                  context)
-                                                              .secondary,
                                                     ),
-                                                  );
-                                                }
+                                                    duration: Duration(
+                                                        milliseconds: 4000),
+                                                    backgroundColor:
+                                                        FlutterFlowTheme.of(
+                                                                context)
+                                                            .secondary,
+                                                  ),
+                                                );
+                                              }
 
-                                                _scrollDown();
+                                              await Future.delayed(
+                                                  const Duration(
+                                                      milliseconds: 5000));
+                                              await _model.listViewController
+                                                  ?.animateTo(
+                                                _model.listViewController!
+                                                    .position.maxScrollExtent,
+                                                duration: Duration(
+                                                    milliseconds: 5000),
+                                                curve: Curves.ease,
+                                              );
+                                              await _model.columnController
+                                                  ?.animateTo(
+                                                _model.columnController!
+                                                    .position.maxScrollExtent,
+                                                duration: Duration(
+                                                    milliseconds: 5000),
+                                                curve: Curves.ease,
+                                              );
+                                              await _model.rowController
+                                                  ?.animateTo(
+                                                _model.rowController!.position
+                                                    .maxScrollExtent,
+                                                duration: Duration(
+                                                    milliseconds: 5000),
+                                                curve: Curves.ease,
+                                              );
 
-                                                setState(() {});
-                                              },
-                                            ),
+                                              setState(() {});
+                                            },
                                           ),
                                         ),
+                                      ),
                                     ],
                                   ),
                                 ),
@@ -937,53 +975,5 @@ class _Chatapge2WidgetState extends State<Chatapge2Widget> {
         );
       },
     );
-  }
-
-  @override
-  void dispose() {
-    _model.dispose();
-
-    super.dispose();
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    _model = createModel(context, () => Chatapge2Model());
-
-    // On page load action.
-    SchedulerBinding.instance.addPostFrameCallback((_) async {
-      await _model.listViewController?.animateTo(
-        _model.listViewController!.position.maxScrollExtent,
-        duration: Duration(milliseconds: 0),
-        curve: Curves.ease,
-      );
-    });
-
-    _model.fullNameController ??= TextEditingController();
-  }
-
-  void _scrollDown() async {
-    await Future.delayed(const Duration(milliseconds: 1));
-    await _model.listViewController?.animateTo(
-      _model.listViewController!.position.maxScrollExtent,
-      duration: Duration(milliseconds: 1),
-      curve: Curves.ease,
-    );
-    await _model.columnController?.animateTo(
-      _model.columnController!.position.maxScrollExtent,
-      duration: Duration(milliseconds: 1),
-      curve: Curves.ease,
-    );
-    await _model.rowController?.animateTo(
-      _model.rowController!.position.maxScrollExtent,
-      duration: Duration(milliseconds: 1),
-      curve: Curves.ease,
-    );
-
-    Timer(Duration(milliseconds: 0), () {
-      _model.listViewController!
-          .jumpTo(_model.listViewController!.position.maxScrollExtent);
-    });
   }
 }

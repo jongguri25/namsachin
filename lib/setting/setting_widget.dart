@@ -106,6 +106,8 @@ class _SettingWidgetState extends State<SettingWidget>
     _model.yourNameController ??=
         TextEditingController(text: currentUserDisplayName);
     _model.emailController ??= TextEditingController(text: currentUserEmail);
+
+    WidgetsBinding.instance.addPostFrameCallback((_) => setState(() {}));
   }
 
   @override
@@ -1879,6 +1881,60 @@ class _SettingWidgetState extends State<SettingWidget>
                             validator: _model.emailControllerValidator
                                 .asValidator(context),
                           ),
+                        ),
+                        Column(
+                          mainAxisSize: MainAxisSize.min,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            InkWell(
+                              splashColor: Colors.transparent,
+                              focusColor: Colors.transparent,
+                              hoverColor: Colors.transparent,
+                              highlightColor: Colors.transparent,
+                              onTap: () async {
+                                await launchURL(
+                                    'https://jongguri.notion.site/d07df9629f5d4a5389bc763511a513e8?pvs=4');
+                              },
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Text(
+                                    '☑️ 약관 동의',
+                                    style: FlutterFlowTheme.of(context)
+                                        .bodyMedium
+                                        .override(
+                                          fontFamily: 'Open Sans',
+                                          color: Color(0xFFC9C9C9),
+                                        ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            InkWell(
+                              splashColor: Colors.transparent,
+                              focusColor: Colors.transparent,
+                              hoverColor: Colors.transparent,
+                              highlightColor: Colors.transparent,
+                              onTap: () async {
+                                await launchURL(
+                                    'https://jongguri.notion.site/faa25e56fa674a02aac33ae499f2c1ca?pvs=4');
+                              },
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Text(
+                                    '☑️ 개인정보 수집 및 이용 동의 ',
+                                    style: FlutterFlowTheme.of(context)
+                                        .bodyMedium
+                                        .override(
+                                          fontFamily: 'Open Sans',
+                                          color: Color(0xFFC9C9C9),
+                                        ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
                         ),
                         Align(
                           alignment: AlignmentDirectional(0.0, 0.05),

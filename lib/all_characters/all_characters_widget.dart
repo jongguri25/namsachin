@@ -28,6 +28,8 @@ class _AllCharactersWidgetState extends State<AllCharactersWidget> {
   void initState() {
     super.initState();
     _model = createModel(context, () => AllCharactersModel());
+
+    WidgetsBinding.instance.addPostFrameCallback((_) => setState(() {}));
   }
 
   @override
@@ -110,7 +112,7 @@ class _AllCharactersWidgetState extends State<AllCharactersWidget> {
                           image: DecorationImage(
                             fit: BoxFit.cover,
                             image: Image.asset(
-                              'assets/images/e61b4fd114be442c9e893028fbd37d96.jpg',
+                              'assets/images/Frame_105.png',
                             ).image,
                           ),
                           borderRadius: BorderRadius.circular(12.0),
