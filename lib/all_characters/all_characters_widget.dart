@@ -29,6 +29,8 @@ class _AllCharactersWidgetState extends State<AllCharactersWidget> {
     super.initState();
     _model = createModel(context, () => AllCharactersModel());
 
+    logFirebaseEvent('screen_view',
+        parameters: {'screen_name': 'AllCharacters'});
     WidgetsBinding.instance.addPostFrameCallback((_) => setState(() {}));
   }
 
@@ -133,6 +135,10 @@ class _AllCharactersWidgetState extends State<AllCharactersWidget> {
                           hoverColor: Colors.transparent,
                           highlightColor: Colors.transparent,
                           onTap: () async {
+                            logFirebaseEvent(
+                                'ALL_CHARACTERS_PAGE_Row_ps2fa7lv_ON_TAP');
+                            logFirebaseEvent('Row_navigate_to');
+
                             context.pushNamed('setting');
                           },
                           child: Row(
@@ -281,6 +287,9 @@ class _AllCharactersWidgetState extends State<AllCharactersWidget> {
                                 hoverColor: Colors.transparent,
                                 highlightColor: Colors.transparent,
                                 onTap: () async {
+                                  logFirebaseEvent(
+                                      'ALL_CHARACTERS_Container_9avtwv9o_ON_TAP');
+                                  logFirebaseEvent('Container_firestore_query');
                                   _model.isChatExist =
                                       await queryChatsRecordOnce(
                                     queryBuilder: (chatsRecord) => chatsRecord
@@ -292,6 +301,8 @@ class _AllCharactersWidgetState extends State<AllCharactersWidget> {
                                     singleRecord: true,
                                   ).then((s) => s.firstOrNull);
                                   if (_model.isChatExist != null) {
+                                    logFirebaseEvent('Container_navigate_to');
+
                                     context.pushNamed(
                                       'chatapge2',
                                       queryParameters: {
@@ -319,6 +330,7 @@ class _AllCharactersWidgetState extends State<AllCharactersWidget> {
                                     );
                                   } else {
                                     // createChat
+                                    logFirebaseEvent('Container_createChat');
 
                                     var chatsRecordReference =
                                         ChatsRecord.collection.doc();
@@ -345,6 +357,7 @@ class _AllCharactersWidgetState extends State<AllCharactersWidget> {
                                       'last_message_time': DateTime.now(),
                                     }, chatsRecordReference);
                                     // firstMessage
+                                    logFirebaseEvent('Container_firstMessage');
 
                                     var chatMessagesRecordReference1 =
                                         ChatMessagesRecord.collection.doc();
@@ -372,6 +385,7 @@ class _AllCharactersWidgetState extends State<AllCharactersWidget> {
                                       'timestamp': DateTime.now(),
                                     }, chatMessagesRecordReference1);
                                     // SecondMessage
+                                    logFirebaseEvent('Container_SecondMessage');
 
                                     var chatMessagesRecordReference2 =
                                         ChatMessagesRecord.collection.doc();
@@ -400,6 +414,7 @@ class _AllCharactersWidgetState extends State<AllCharactersWidget> {
                                       ),
                                       'timestamp': DateTime.now(),
                                     }, chatMessagesRecordReference2);
+                                    logFirebaseEvent('Container_navigate_to');
 
                                     context.pushNamed(
                                       'chatapge2',

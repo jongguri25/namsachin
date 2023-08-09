@@ -42,8 +42,11 @@ class _Chatapge2WidgetState extends State<Chatapge2Widget> {
     super.initState();
     _model = createModel(context, () => Chatapge2Model());
 
+    logFirebaseEvent('screen_view', parameters: {'screen_name': 'chatapge2'});
     // On page load action.
     SchedulerBinding.instance.addPostFrameCallback((_) async {
+      logFirebaseEvent('CHATAPGE2_PAGE_chatapge2_ON_INIT_STATE');
+      logFirebaseEvent('chatapge2_scroll_to');
       await _model.listViewController?.animateTo(
         _model.listViewController!.position.maxScrollExtent,
         duration: Duration(milliseconds: 0),
@@ -106,6 +109,9 @@ class _Chatapge2WidgetState extends State<Chatapge2Widget> {
                   size: 30.0,
                 ),
                 onPressed: () async {
+                  logFirebaseEvent('CHATAPGE2_arrow_back_rounded_ICN_ON_TAP');
+                  logFirebaseEvent('IconButton_navigate_to');
+
                   context.pushNamed('AllChatsPage');
                 },
               ),
@@ -787,7 +793,11 @@ class _Chatapge2WidgetState extends State<Chatapge2Widget> {
                                               size: 30.0,
                                             ),
                                             onPressed: () async {
+                                              logFirebaseEvent(
+                                                  'CHATAPGE2_arrow_upward_sharp_ICN_ON_TAP');
                                               // createUserMessage
+                                              logFirebaseEvent(
+                                                  'IconButton_createUserMessage');
 
                                               var chatMessagesRecordReference1 =
                                                   ChatMessagesRecord.collection
@@ -822,10 +832,14 @@ class _Chatapge2WidgetState extends State<Chatapge2Widget> {
                                                 ),
                                                 'timestamp': DateTime.now(),
                                               }, chatMessagesRecordReference1);
+                                              logFirebaseEvent(
+                                                  'IconButton_clear_text_fields');
                                               setState(() {
                                                 _model.fullNameController
                                                     ?.clear();
                                               });
+                                              logFirebaseEvent(
+                                                  'IconButton_backend_call');
                                               _model.apiResult94f =
                                                   await ClovaCall.call(
                                                 text: _model.createUserMessage
@@ -835,6 +849,8 @@ class _Chatapge2WidgetState extends State<Chatapge2Widget> {
                                                       ?.succeeded ??
                                                   true)) {
                                                 // createAIMessage
+                                                logFirebaseEvent(
+                                                    'IconButton_createAIMessage');
 
                                                 var chatMessagesRecordReference2 =
                                                     ChatMessagesRecord
@@ -889,6 +905,8 @@ class _Chatapge2WidgetState extends State<Chatapge2Widget> {
                                                   'timestamp': DateTime.now(),
                                                 }, chatMessagesRecordReference2);
                                                 // updateChat
+                                                logFirebaseEvent(
+                                                    'IconButton_updateChat');
 
                                                 await widget.chat!.update({
                                                   ...createChatsRecordData(
@@ -903,6 +921,8 @@ class _Chatapge2WidgetState extends State<Chatapge2Widget> {
                                                           .serverTimestamp(),
                                                 });
                                               } else {
+                                                logFirebaseEvent(
+                                                    'IconButton_show_snack_bar');
                                                 ScaffoldMessenger.of(context)
                                                     .showSnackBar(
                                                   SnackBar(
@@ -925,9 +945,13 @@ class _Chatapge2WidgetState extends State<Chatapge2Widget> {
                                                 );
                                               }
 
+                                              logFirebaseEvent(
+                                                  'IconButton_wait__delay');
                                               await Future.delayed(
                                                   const Duration(
                                                       milliseconds: 5000));
+                                              logFirebaseEvent(
+                                                  'IconButton_scroll_to');
                                               await _model.listViewController
                                                   ?.animateTo(
                                                 _model.listViewController!
@@ -936,6 +960,8 @@ class _Chatapge2WidgetState extends State<Chatapge2Widget> {
                                                     milliseconds: 5000),
                                                 curve: Curves.ease,
                                               );
+                                              logFirebaseEvent(
+                                                  'IconButton_scroll_to');
                                               await _model.columnController
                                                   ?.animateTo(
                                                 _model.columnController!
@@ -944,6 +970,8 @@ class _Chatapge2WidgetState extends State<Chatapge2Widget> {
                                                     milliseconds: 5000),
                                                 curve: Curves.ease,
                                               );
+                                              logFirebaseEvent(
+                                                  'IconButton_scroll_to');
                                               await _model.rowController
                                                   ?.animateTo(
                                                 _model.rowController!.position

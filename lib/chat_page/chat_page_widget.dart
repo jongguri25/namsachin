@@ -44,6 +44,7 @@ class _ChatPageWidgetState extends State<ChatPageWidget> {
     super.initState();
     _model = createModel(context, () => ChatPageModel());
 
+    logFirebaseEvent('screen_view', parameters: {'screen_name': 'ChatPage'});
     FFChatManager.instance
         .getChatInfo(
       otherUserRecord: widget.chatUser,
@@ -87,6 +88,8 @@ class _ChatPageWidgetState extends State<ChatPageWidget> {
               size: 24.0,
             ),
             onPressed: () async {
+              logFirebaseEvent('CHAT_arrow_back_rounded_ICN_ON_TAP');
+              logFirebaseEvent('IconButton_navigate_back');
               context.pop();
             },
           ),

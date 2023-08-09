@@ -91,8 +91,11 @@ class _SettingWidgetState extends State<SettingWidget>
     super.initState();
     _model = createModel(context, () => SettingModel());
 
+    logFirebaseEvent('screen_view', parameters: {'screen_name': 'setting'});
     // On page load action.
     SchedulerBinding.instance.addPostFrameCallback((_) async {
+      logFirebaseEvent('SETTING_PAGE_setting_ON_INIT_STATE');
+      logFirebaseEvent('setting_update_widget_state');
       setState(() {
         _model.create = false;
       });
@@ -211,6 +214,10 @@ class _SettingWidgetState extends State<SettingWidget>
                                             hoverColor: Colors.transparent,
                                             highlightColor: Colors.transparent,
                                             onTap: () async {
+                                              logFirebaseEvent(
+                                                  'SETTING_PAGE_Text_682ibac3_ON_TAP');
+                                              logFirebaseEvent(
+                                                  'Text_update_widget_state');
                                               setState(() {
                                                 _model.create = false;
                                               });
@@ -244,6 +251,10 @@ class _SettingWidgetState extends State<SettingWidget>
                                             hoverColor: Colors.transparent,
                                             highlightColor: Colors.transparent,
                                             onTap: () async {
+                                              logFirebaseEvent(
+                                                  'SETTING_PAGE_Text_haht21fd_ON_TAP');
+                                              logFirebaseEvent(
+                                                  'Text_update_widget_state');
                                               setState(() {
                                                 _model.create = true;
                                               });
@@ -503,6 +514,10 @@ class _SettingWidgetState extends State<SettingWidget>
                                                           0.0, 0.0, 0.0, 16.0),
                                                   child: FFButtonWidget(
                                                     onPressed: () async {
+                                                      logFirebaseEvent(
+                                                          'SETTING_PAGE_로그인_BTN_ON_TAP');
+                                                      logFirebaseEvent(
+                                                          'Button_auth');
                                                       GoRouter.of(context)
                                                           .prepareAuthEvent();
 
@@ -705,6 +720,10 @@ class _SettingWidgetState extends State<SettingWidget>
                                                                   FFButtonWidget(
                                                                 onPressed:
                                                                     () async {
+                                                                  logFirebaseEvent(
+                                                                      'SETTING_CONTINUE_WITH_GOOGLE_BTN_ON_TAP');
+                                                                  logFirebaseEvent(
+                                                                      'Button_auth');
                                                                   GoRouter.of(
                                                                           context)
                                                                       .prepareAuthEvent();
@@ -789,6 +808,10 @@ class _SettingWidgetState extends State<SettingWidget>
                                                                         FFButtonWidget(
                                                                       onPressed:
                                                                           () async {
+                                                                        logFirebaseEvent(
+                                                                            'SETTING_CONTINUE_WITH_APPLE_BTN_ON_TAP');
+                                                                        logFirebaseEvent(
+                                                                            'Button_auth');
                                                                         GoRouter.of(context)
                                                                             .prepareAuthEvent();
                                                                         final user =
@@ -1197,6 +1220,10 @@ class _SettingWidgetState extends State<SettingWidget>
                                                           0.0, 0.0, 0.0, 16.0),
                                                   child: FFButtonWidget(
                                                     onPressed: () async {
+                                                      logFirebaseEvent(
+                                                          'SETTING_PAGE_회원가입_BTN_ON_TAP');
+                                                      logFirebaseEvent(
+                                                          'Button_auth');
                                                       GoRouter.of(context)
                                                           .prepareAuthEvent();
                                                       if (_model
@@ -1311,6 +1338,10 @@ class _SettingWidgetState extends State<SettingWidget>
                                                     highlightColor:
                                                         Colors.transparent,
                                                     onTap: () async {
+                                                      logFirebaseEvent(
+                                                          'SETTING_PAGE_Row_x7utdkbc_ON_TAP');
+                                                      logFirebaseEvent(
+                                                          'Row_launch_u_r_l');
                                                       await launchURL(
                                                           'https://jongguri.notion.site/d07df9629f5d4a5389bc763511a513e8?pvs=4');
                                                     },
@@ -1343,6 +1374,10 @@ class _SettingWidgetState extends State<SettingWidget>
                                                     highlightColor:
                                                         Colors.transparent,
                                                     onTap: () async {
+                                                      logFirebaseEvent(
+                                                          'SETTING_PAGE_Row_26yakuag_ON_TAP');
+                                                      logFirebaseEvent(
+                                                          'Row_launch_u_r_l');
                                                       await launchURL(
                                                           'https://jongguri.notion.site/faa25e56fa674a02aac33ae499f2c1ca?pvs=4');
                                                     },
@@ -1444,6 +1479,10 @@ class _SettingWidgetState extends State<SettingWidget>
                                                                   FFButtonWidget(
                                                                 onPressed:
                                                                     () async {
+                                                                  logFirebaseEvent(
+                                                                      'SETTING_CONTINUE_WITH_GOOGLE_BTN_ON_TAP');
+                                                                  logFirebaseEvent(
+                                                                      'Button_auth');
                                                                   GoRouter.of(
                                                                           context)
                                                                       .prepareAuthEvent();
@@ -1528,6 +1567,10 @@ class _SettingWidgetState extends State<SettingWidget>
                                                                         FFButtonWidget(
                                                                       onPressed:
                                                                           () async {
+                                                                        logFirebaseEvent(
+                                                                            'SETTING_CONTINUE_WITH_APPLE_BTN_ON_TAP');
+                                                                        logFirebaseEvent(
+                                                                            'Button_auth');
                                                                         GoRouter.of(context)
                                                                             .prepareAuthEvent();
                                                                         final user =
@@ -1662,6 +1705,10 @@ class _SettingWidgetState extends State<SettingWidget>
                                 hoverColor: Colors.transparent,
                                 highlightColor: Colors.transparent,
                                 onTap: () async {
+                                  logFirebaseEvent(
+                                      'SETTING_PAGE_imageBorder_ON_TAP');
+                                  logFirebaseEvent(
+                                      'imageBorder_upload_media_to_firebase');
                                   final selectedMedia =
                                       await selectMediaWithSourceBottomSheet(
                                     context: context,
@@ -1734,6 +1781,8 @@ class _SettingWidgetState extends State<SettingWidget>
                                       return;
                                     }
                                   }
+
+                                  logFirebaseEvent('imageBorder_backend_call');
 
                                   await currentUserReference!
                                       .update(createUsersRecordData(
@@ -1892,6 +1941,9 @@ class _SettingWidgetState extends State<SettingWidget>
                               hoverColor: Colors.transparent,
                               highlightColor: Colors.transparent,
                               onTap: () async {
+                                logFirebaseEvent(
+                                    'SETTING_PAGE_Row_jsc5fvit_ON_TAP');
+                                logFirebaseEvent('Row_launch_u_r_l');
                                 await launchURL(
                                     'https://jongguri.notion.site/d07df9629f5d4a5389bc763511a513e8?pvs=4');
                               },
@@ -1916,6 +1968,9 @@ class _SettingWidgetState extends State<SettingWidget>
                               hoverColor: Colors.transparent,
                               highlightColor: Colors.transparent,
                               onTap: () async {
+                                logFirebaseEvent(
+                                    'SETTING_PAGE_Row_dofmhayg_ON_TAP');
+                                logFirebaseEvent('Row_launch_u_r_l');
                                 await launchURL(
                                     'https://jongguri.notion.site/faa25e56fa674a02aac33ae499f2c1ca?pvs=4');
                               },
@@ -1943,11 +1998,15 @@ class _SettingWidgetState extends State<SettingWidget>
                                 0.0, 24.0, 0.0, 0.0),
                             child: FFButtonWidget(
                               onPressed: () async {
+                                logFirebaseEvent('SETTING_PAGE_저장_BTN_ON_TAP');
+                                logFirebaseEvent('Button_backend_call');
+
                                 await currentUserReference!
                                     .update(createUsersRecordData(
                                   email: _model.emailController.text,
                                   displayName: _model.yourNameController.text,
                                 ));
+                                logFirebaseEvent('Button_show_snack_bar');
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   SnackBar(
                                     content: Text(
@@ -1995,6 +2054,9 @@ class _SettingWidgetState extends State<SettingWidget>
                                 0.0, 12.0, 0.0, 0.0),
                             child: FFButtonWidget(
                               onPressed: () async {
+                                logFirebaseEvent(
+                                    'SETTING_PAGE_Button_logout_ON_TAP');
+                                logFirebaseEvent('Button_logout_auth');
                                 GoRouter.of(context).prepareAuthEvent();
                                 await authManager.signOut();
                                 GoRouter.of(context).clearRedirectLocation();
@@ -2032,7 +2094,12 @@ class _SettingWidgetState extends State<SettingWidget>
                                 0.0, 12.0, 0.0, 0.0),
                             child: FFButtonWidget(
                               onPressed: () async {
+                                logFirebaseEvent(
+                                    'SETTING_PAGE_Button_delete_ON_TAP');
+                                logFirebaseEvent('Button_delete_backend_call');
                                 await currentUserReference!.delete();
+                                logFirebaseEvent(
+                                    'Button_delete_show_snack_bar');
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   SnackBar(
                                     content: Text(

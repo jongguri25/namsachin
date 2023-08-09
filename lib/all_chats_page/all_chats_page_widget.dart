@@ -26,6 +26,8 @@ class _AllChatsPageWidgetState extends State<AllChatsPageWidget> {
     super.initState();
     _model = createModel(context, () => AllChatsPageModel());
 
+    logFirebaseEvent('screen_view',
+        parameters: {'screen_name': 'AllChatsPage'});
     WidgetsBinding.instance.addPostFrameCallback((_) => setState(() {}));
   }
 
@@ -143,6 +145,10 @@ class _AllChatsPageWidgetState extends State<AllChatsPageWidget> {
                                 hoverColor: Colors.transparent,
                                 highlightColor: Colors.transparent,
                                 onTap: () async {
+                                  logFirebaseEvent(
+                                      'ALL_CHATS_Container_sg0xnvcq_ON_TAP');
+                                  logFirebaseEvent('Container_navigate_to');
+
                                   context.pushNamed(
                                     'chatapge2',
                                     queryParameters: {

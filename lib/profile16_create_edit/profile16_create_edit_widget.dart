@@ -31,6 +31,8 @@ class _Profile16CreateEditWidgetState extends State<Profile16CreateEditWidget> {
     super.initState();
     _model = createModel(context, () => Profile16CreateEditModel());
 
+    logFirebaseEvent('screen_view',
+        parameters: {'screen_name': 'Profile16CreateEdit'});
     _model.yourNameController ??= TextEditingController();
     _model.cityController ??= TextEditingController();
     _model.myBioController ??= TextEditingController();
@@ -84,6 +86,9 @@ class _Profile16CreateEditWidgetState extends State<Profile16CreateEditWidget> {
                               size: 30.0,
                             ),
                             onPressed: () async {
+                              logFirebaseEvent(
+                                  'PROFILE16_CREATE_EDIT_arrow_back_rounded');
+                              logFirebaseEvent('IconButton_navigate_back');
                               context.pop();
                             },
                           ),
@@ -131,6 +136,9 @@ class _Profile16CreateEditWidgetState extends State<Profile16CreateEditWidget> {
                     hoverColor: Colors.transparent,
                     highlightColor: Colors.transparent,
                     onTap: () async {
+                      logFirebaseEvent(
+                          'PROFILE16_CREATE_EDIT_imageBorder_ON_TAP');
+                      logFirebaseEvent('imageBorder_upload_media_to_firebase');
                       final selectedMedia =
                           await selectMediaWithSourceBottomSheet(
                         context: context,
