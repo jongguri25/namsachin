@@ -1,31 +1,30 @@
-import '/auth/base_auth_user_provider.dart';
 import '/auth/firebase_auth/auth_util.dart';
 import '/backend/backend.dart';
 import '/flutter_flow/flutter_flow_icon_button.dart';
+import '/flutter_flow/flutter_flow_swipeable_stack.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
+import 'package:swipeable_card_stack/swipeable_card_stack.dart';
 
 class AllCharactersModel extends FlutterFlowModel {
   ///  State fields for stateful widgets in this page.
 
   final unfocusNode = FocusNode();
-  // Stores action output result for [Firestore Query - Query a collection] action in Container widget.
-  ChatsRecord? isChatExist;
-  // Stores action output result for [Backend Call - Create Document] action in Container widget.
+  // State field(s) for SwipeableStack widget.
+  late SwipeableCardSectionController swipeableStackController;
+  // Stores action output result for [Backend Call - Create Document] action in SwipeableStack widget.
   ChatsRecord? chatMade;
-  // Stores action output result for [Backend Call - Create Document] action in Container widget.
-  ChatMessagesRecord? firstMessage;
-  // Stores action output result for [Backend Call - Create Document] action in Container widget.
-  ChatMessagesRecord? secondMessage;
 
   /// Initialization and disposal methods.
 
-  void initState(BuildContext context) {}
+  void initState(BuildContext context) {
+    swipeableStackController = SwipeableCardSectionController();
+  }
 
   void dispose() {
     unfocusNode.dispose();

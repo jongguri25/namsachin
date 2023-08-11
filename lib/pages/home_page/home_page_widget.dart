@@ -1,9 +1,14 @@
+import '/auth/firebase_auth/auth_util.dart';
 import '/backend/backend.dart';
+import '/flutter_flow/flutter_flow_icon_button.dart';
+import '/flutter_flow/flutter_flow_swipeable_stack.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
+import 'package:swipeable_card_stack/swipeable_card_stack.dart';
 import 'home_page_model.dart';
 export 'home_page_model.dart';
 
@@ -44,58 +49,80 @@ class _HomePageWidgetState extends State<HomePageWidget> {
       child: Scaffold(
         key: scaffoldKey,
         backgroundColor: FlutterFlowTheme.of(context).primaryBackground,
-        appBar: AppBar(
-          backgroundColor: FlutterFlowTheme.of(context).primary,
-          automaticallyImplyLeading: false,
-          title: Text(
-            'Page Title',
-            style: FlutterFlowTheme.of(context).headlineMedium.override(
-                  fontFamily: 'NIXGON',
-                  color: Colors.white,
-                  fontSize: 22.0,
-                  useGoogleFonts: false,
-                ),
-          ),
-          actions: [],
-          centerTitle: false,
-          elevation: 2.0,
-        ),
         body: SafeArea(
           top: true,
           child: Column(
             mainAxisSize: MainAxisSize.max,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              StreamBuilder<List<UsersRecord>>(
-                stream: queryUsersRecord(),
-                builder: (context, snapshot) {
-                  // Customize what your widget looks like when it's loading.
-                  if (!snapshot.hasData) {
-                    return Center(
-                      child: SizedBox(
-                        width: 50.0,
-                        height: 50.0,
-                        child: CircularProgressIndicator(
-                          valueColor: AlwaysStoppedAnimation<Color>(
-                            FlutterFlowTheme.of(context).primary,
+              Expanded(
+                child: StreamBuilder<List<CharacterRecord>>(
+                  stream: queryCharacterRecord(),
+                  builder: (context, snapshot) {
+                    // Customize what your widget looks like when it's loading.
+                    if (!snapshot.hasData) {
+                      return Center(
+                        child: SizedBox(
+                          width: 50.0,
+                          height: 50.0,
+                          child: CircularProgressIndicator(
+                            valueColor: AlwaysStoppedAnimation<Color>(
+                              FlutterFlowTheme.of(context).primary,
+                            ),
                           ),
                         ),
-                      ),
-                    );
-                  }
-                  List<UsersRecord> listViewUsersRecordList = snapshot.data!;
-                  return ListView.builder(
-                    padding: EdgeInsets.zero,
-                    shrinkWrap: true,
-                    scrollDirection: Axis.vertical,
-                    itemCount: listViewUsersRecordList.length,
-                    itemBuilder: (context, listViewIndex) {
-                      final listViewUsersRecord =
-                          listViewUsersRecordList[listViewIndex];
-                      return Padding(
-                        padding: EdgeInsetsDirectional.fromSTEB(
-                            16.0, 8.0, 16.0, 8.0),
-                        child: Card(
+                      );
+                    }
+                    List<CharacterRecord> swipeableStackCharacterRecordList =
+                        snapshot.data!;
+                    return FlutterFlowSwipeableStack(
+                      topCardHeightFraction: 0.72,
+                      middleCardHeightFraction: 0.68,
+                      bottomCardHeightFraction: 0.75,
+                      topCardWidthFraction: 0.9,
+                      middleCardWidthFraction: 0.85,
+                      bottomCardWidthFraction: 0.8,
+                      onSwipeFn: (index) {},
+                      onLeftSwipe: (index) async {
+                        logFirebaseEvent(
+                            'HOME_SwipeableStack_3f2278uc_ON_LEFT_SWI');
+                        final swipeableStackCharacterRecord =
+                            swipeableStackCharacterRecordList[index];
+                        logFirebaseEvent('SwipeableStack_backend_call');
+
+                        await MatchRecord.collection.doc().set({
+                          ...createMatchRecordData(
+                            character: swipeableStackCharacterRecordList[index]
+                                ?.reference,
+                            user: currentUserReference,
+                            isMatch: false,
+                          ),
+                          'updatedDate': FieldValue.serverTimestamp(),
+                        });
+                      },
+                      onRightSwipe: (index) async {
+                        logFirebaseEvent(
+                            'HOME_SwipeableStack_3f2278uc_ON_RIGHT_SW');
+                        final swipeableStackCharacterRecord =
+                            swipeableStackCharacterRecordList[index];
+                        logFirebaseEvent('SwipeableStack_backend_call');
+
+                        await MatchRecord.collection.doc().set({
+                          ...createMatchRecordData(
+                            character: swipeableStackCharacterRecordList[index]
+                                ?.reference,
+                            user: currentUserReference,
+                            isMatch: true,
+                          ),
+                          'updatedDate': FieldValue.serverTimestamp(),
+                        });
+                      },
+                      onUpSwipe: (index) {},
+                      onDownSwipe: (index) {},
+                      itemBuilder: (context, swipeableStackIndex) {
+                        final swipeableStackCharacterRecord =
+                            swipeableStackCharacterRecordList[
+                                swipeableStackIndex];
+                        return Card(
                           clipBehavior: Clip.antiAliasWithSaveLayer,
                           color:
                               FlutterFlowTheme.of(context).secondaryBackground,
@@ -103,40 +130,100 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(8.0),
                           ),
-                          child: Row(
+                          child: Column(
                             mainAxisSize: MainAxisSize.max,
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              ClipRRect(
-                                borderRadius: BorderRadius.circular(8.0),
-                                child: Image.network(
-                                  listViewUsersRecord.photoUrl,
-                                  width: 100.0,
-                                  height: 100.0,
-                                  fit: BoxFit.cover,
-                                ),
-                              ),
-                              Text(
-                                listViewUsersRecord.displayName,
-                                style: FlutterFlowTheme.of(context).bodyMedium,
+                              Stack(
+                                alignment: AlignmentDirectional(0.0, 1.0),
+                                children: [
+                                  ClipRRect(
+                                    borderRadius: BorderRadius.circular(8.0),
+                                    child: Image.network(
+                                      swipeableStackCharacterRecord
+                                          .profileImage,
+                                      width: double.infinity,
+                                      height: 500.0,
+                                      fit: BoxFit.cover,
+                                    ),
+                                  ),
+                                  Padding(
+                                    padding: EdgeInsetsDirectional.fromSTEB(
+                                        20.0, 0.0, 0.0, 20.0),
+                                    child: Row(
+                                      mainAxisSize: MainAxisSize.max,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.center,
+                                      children: [
+                                        Text(
+                                          swipeableStackCharacterRecord.name,
+                                          style: FlutterFlowTheme.of(context)
+                                              .bodyMedium
+                                              .override(
+                                                fontFamily: 'NIXGON',
+                                                color: Colors.white,
+                                                fontSize: 32.0,
+                                                fontWeight: FontWeight.bold,
+                                                useGoogleFonts: false,
+                                              ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
                               ),
                               Padding(
                                 padding: EdgeInsetsDirectional.fromSTEB(
-                                    0.0, 0.0, 16.0, 0.0),
-                                child: Icon(
-                                  Icons.send_sharp,
-                                  color: FlutterFlowTheme.of(context)
-                                      .secondaryText,
-                                  size: 24.0,
+                                    0.0, 20.0, 0.0, 0.0),
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.max,
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    FlutterFlowIconButton(
+                                      borderColor: Color(0xFFFF2E54),
+                                      borderRadius: 100.0,
+                                      borderWidth: 1.0,
+                                      buttonSize: 60.0,
+                                      icon: Icon(
+                                        Icons.cancel_outlined,
+                                        color: Color(0xFFFF2E54),
+                                        size: 40.0,
+                                      ),
+                                      onPressed: () {
+                                        print('IconButton pressed ...');
+                                      },
+                                    ),
+                                    Padding(
+                                      padding: EdgeInsetsDirectional.fromSTEB(
+                                          40.0, 0.0, 0.0, 0.0),
+                                      child: FlutterFlowIconButton(
+                                        borderColor: Color(0xFF28E7AB),
+                                        borderRadius: 100.0,
+                                        borderWidth: 1.0,
+                                        buttonSize: 60.0,
+                                        icon: Icon(
+                                          Icons.favorite,
+                                          color: Color(0xFF28E7AB),
+                                          size: 40.0,
+                                        ),
+                                        onPressed: () {
+                                          print('IconButton pressed ...');
+                                        },
+                                      ),
+                                    ),
+                                  ],
                                 ),
                               ),
                             ],
                           ),
-                        ),
-                      );
-                    },
-                  );
-                },
+                        );
+                      },
+                      itemCount: swipeableStackCharacterRecordList.length,
+                      controller: _model.swipeableStackController,
+                      enableSwipeUp: false,
+                      enableSwipeDown: false,
+                    );
+                  },
+                ),
               ),
             ],
           ),

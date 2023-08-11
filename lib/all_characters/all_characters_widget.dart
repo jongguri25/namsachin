@@ -1,14 +1,15 @@
-import '/auth/base_auth_user_provider.dart';
 import '/auth/firebase_auth/auth_util.dart';
 import '/backend/backend.dart';
 import '/flutter_flow/flutter_flow_icon_button.dart';
+import '/flutter_flow/flutter_flow_swipeable_stack.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
+import 'package:swipeable_card_stack/swipeable_card_stack.dart';
 import 'all_characters_model.dart';
 export 'all_characters_model.dart';
 
@@ -19,7 +20,8 @@ class AllCharactersWidget extends StatefulWidget {
   _AllCharactersWidgetState createState() => _AllCharactersWidgetState();
 }
 
-class _AllCharactersWidgetState extends State<AllCharactersWidget> {
+class _AllCharactersWidgetState extends State<AllCharactersWidget>
+    with TickerProviderStateMixin {
   late AllCharactersModel _model;
 
   final scaffoldKey = GlobalKey<ScaffoldState>();
@@ -44,7 +46,7 @@ class _AllCharactersWidgetState extends State<AllCharactersWidget> {
   @override
   Widget build(BuildContext context) {
     context.watch<FFAppState>();
-
+    final lottieAnimationController = AnimationController(vsync: this);
     return GestureDetector(
       onTap: () => FocusScope.of(context).requestFocus(_model.unfocusNode),
       child: Scaffold(
@@ -90,491 +92,377 @@ class _AllCharactersWidgetState extends State<AllCharactersWidget> {
         ),
         body: SafeArea(
           top: true,
-          child: Container(
-            width: double.infinity,
-            height: double.infinity,
-            decoration: BoxDecoration(
-              color: FlutterFlowTheme.of(context).secondaryBackground,
-            ),
-            child: Padding(
-              padding: EdgeInsetsDirectional.fromSTEB(10.0, 0.0, 10.0, 0.0),
-              child: SingleChildScrollView(
-                child: Column(
-                  mainAxisSize: MainAxisSize.max,
+          child: Column(
+            mainAxisSize: MainAxisSize.max,
+            children: [
+              Expanded(
+                child: Stack(
                   children: [
-                    Padding(
-                      padding:
-                          EdgeInsetsDirectional.fromSTEB(10.0, 10.0, 10.0, 0.0),
-                      child: Container(
-                        width: double.infinity,
-                        height: 90.0,
-                        decoration: BoxDecoration(
-                          color:
-                              FlutterFlowTheme.of(context).secondaryBackground,
-                          image: DecorationImage(
-                            fit: BoxFit.cover,
-                            image: Image.asset(
-                              'assets/images/Frame_105.png',
-                            ).image,
-                          ),
-                          borderRadius: BorderRadius.circular(12.0),
+                    AuthUserStreamWidget(
+                      builder: (context) =>
+                          StreamBuilder<List<CharacterRecord>>(
+                        stream: queryCharacterRecord(
+                          queryBuilder: (characterRecord) => characterRecord
+                              .where('order',
+                                  isGreaterThan: valueOrDefault(
+                                      currentUserDocument?.characterMet, 0))
+                              .orderBy('order'),
                         ),
-                      ),
-                    ),
-                    Container(
-                      width: double.infinity,
-                      decoration: BoxDecoration(
-                        color: FlutterFlowTheme.of(context).secondaryBackground,
-                      ),
-                      child: Padding(
-                        padding: EdgeInsetsDirectional.fromSTEB(
-                            0.0, 20.0, 0.0, 10.0),
-                        child: InkWell(
-                          splashColor: Colors.transparent,
-                          focusColor: Colors.transparent,
-                          hoverColor: Colors.transparent,
-                          highlightColor: Colors.transparent,
-                          onTap: () async {
-                            logFirebaseEvent(
-                                'ALL_CHARACTERS_PAGE_Row_ps2fa7lv_ON_TAP');
-                            logFirebaseEvent('Row_navigate_to');
-
-                            context.pushNamed('setting');
-                          },
-                          child: Row(
-                            mainAxisSize: MainAxisSize.max,
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: [
-                              Padding(
-                                padding: EdgeInsetsDirectional.fromSTEB(
-                                    10.0, 0.0, 0.0, 0.0),
-                                child: AuthUserStreamWidget(
-                                  builder: (context) => ClipRRect(
-                                    borderRadius: BorderRadius.circular(14.0),
-                                    child: Image.network(
-                                      loggedIn
-                                          ? currentUserPhoto
-                                          : 'https://storage.googleapis.com/flutterflow-io-6f20.appspot.com/projects/livetest2-hx0jlv/assets/0rsbnw4v226f/image_106.png',
-                                      width: 50.0,
-                                      height: 50.0,
-                                      fit: BoxFit.fill,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              Column(
-                                mainAxisSize: MainAxisSize.max,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Padding(
-                                    padding: EdgeInsetsDirectional.fromSTEB(
-                                        16.0, 0.0, 0.0, 0.0),
-                                    child: AuthUserStreamWidget(
-                                      builder: (context) => Text(
-                                        loggedIn
-                                            ? currentUserDisplayName
-                                            : '로그인해 주세요',
-                                        style: FlutterFlowTheme.of(context)
-                                            .labelMedium
-                                            .override(
-                                              fontFamily: 'Open Sans',
-                                              color:
-                                                  FlutterFlowTheme.of(context)
-                                                      .primaryText,
-                                              fontSize: 16.0,
-                                              fontWeight: FontWeight.bold,
-                                            ),
-                                      ),
-                                    ),
-                                  ),
-                                  Padding(
-                                    padding: EdgeInsetsDirectional.fromSTEB(
-                                        16.0, 0.0, 0.0, 0.0),
-                                    child: Text(
-                                      loggedIn ? currentUserEmail : ' ',
-                                      style: FlutterFlowTheme.of(context)
-                                          .bodyMedium
-                                          .override(
-                                            fontFamily: 'Open Sans',
-                                            color: FlutterFlowTheme.of(context)
-                                                .secondaryText,
-                                            fontSize: 12.0,
-                                          ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-                    Divider(
-                      thickness: 1.0,
-                      color: Color(0xFFE4E4E4),
-                    ),
-                    Padding(
-                      padding:
-                          EdgeInsetsDirectional.fromSTEB(10.0, 5.0, 0.0, 0.0),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.max,
-                        children: [
-                          Text(
-                            '남사친',
-                            style: FlutterFlowTheme.of(context)
-                                .bodyMedium
-                                .override(
-                                  fontFamily: 'Open Sans',
-                                  color: FlutterFlowTheme.of(context)
-                                      .secondaryText,
-                                  fontWeight: FontWeight.w500,
-                                ),
-                          ),
-                          Padding(
-                            padding: EdgeInsetsDirectional.fromSTEB(
-                                5.0, 0.0, 0.0, 0.0),
-                            child: Text(
-                              '4',
-                              style: FlutterFlowTheme.of(context)
-                                  .bodyMedium
-                                  .override(
-                                    fontFamily: 'Open Sans',
-                                    color: FlutterFlowTheme.of(context)
-                                        .secondaryText,
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    StreamBuilder<List<CharacterRecord>>(
-                      stream: queryCharacterRecord(
-                        queryBuilder: (characterRecord) =>
-                            characterRecord.orderBy('name'),
-                      ),
-                      builder: (context, snapshot) {
-                        // Customize what your widget looks like when it's loading.
-                        if (!snapshot.hasData) {
-                          return Center(
-                            child: SizedBox(
-                              width: 50.0,
-                              height: 50.0,
-                              child: CircularProgressIndicator(
-                                valueColor: AlwaysStoppedAnimation<Color>(
-                                  FlutterFlowTheme.of(context).primary,
-                                ),
-                              ),
-                            ),
-                          );
-                        }
-                        List<CharacterRecord> listViewCharacterRecordList =
-                            snapshot.data!;
-                        return ListView.builder(
-                          padding: EdgeInsets.zero,
-                          shrinkWrap: true,
-                          scrollDirection: Axis.vertical,
-                          itemCount: listViewCharacterRecordList.length,
-                          itemBuilder: (context, listViewIndex) {
-                            final listViewCharacterRecord =
-                                listViewCharacterRecordList[listViewIndex];
-                            return Padding(
-                              padding: EdgeInsetsDirectional.fromSTEB(
-                                  0.0, 10.0, 0.0, 10.0),
-                              child: InkWell(
-                                splashColor: Colors.transparent,
-                                focusColor: Colors.transparent,
-                                hoverColor: Colors.transparent,
-                                highlightColor: Colors.transparent,
-                                onTap: () async {
-                                  logFirebaseEvent(
-                                      'ALL_CHARACTERS_Container_9avtwv9o_ON_TAP');
-                                  logFirebaseEvent('Container_firestore_query');
-                                  _model.isChatExist =
-                                      await queryChatsRecordOnce(
-                                    queryBuilder: (chatsRecord) => chatsRecord
-                                        .where('user_a',
-                                            isEqualTo: currentUserReference)
-                                        .where('character',
-                                            isEqualTo: listViewCharacterRecord
-                                                .reference),
-                                    singleRecord: true,
-                                  ).then((s) => s.firstOrNull);
-                                  if (_model.isChatExist != null) {
-                                    logFirebaseEvent('Container_navigate_to');
-
-                                    context.pushNamed(
-                                      'chatapge2',
-                                      queryParameters: {
-                                        'character': serializeParam(
-                                          listViewCharacterRecord.reference,
-                                          ParamType.DocumentReference,
-                                        ),
-                                        'chat': serializeParam(
-                                          _model.isChatExist?.reference,
-                                          ParamType.DocumentReference,
-                                        ),
-                                        'characterProfile': serializeParam(
-                                          listViewCharacterRecord.profileImage,
-                                          ParamType.String,
-                                        ),
-                                        'characterName': serializeParam(
-                                          listViewCharacterRecord.name,
-                                          ParamType.String,
-                                        ),
-                                        'prompt': serializeParam(
-                                          _model.isChatExist?.prompt,
-                                          ParamType.String,
-                                        ),
-                                      }.withoutNulls,
-                                    );
-                                  } else {
-                                    // createChat
-                                    logFirebaseEvent('Container_createChat');
-
-                                    var chatsRecordReference =
-                                        ChatsRecord.collection.doc();
-                                    await chatsRecordReference.set({
-                                      ...createChatsRecordData(
-                                        userA: currentUserReference,
-                                        character:
-                                            listViewCharacterRecord.reference,
-                                        prompt:
-                                            '‘남사친’은 듬직한 남자 사람 친구 처럼 여자들과 대화해 주는 30살 헬스 트레이너 남자 입니다. 상대방은 남사친을 지성민 으로 부릅니다. 남사친은 듬직한 말투를 사용합니다. 남사친은 가볍게 조언하거나, 가르치려 들지 않고, 상대방의 입장을 공감해 주고 들어주는 것에 집중 합니다. 너무 무섭지 않게 대화 합니다. 상대방의 대화 내용에 맞게, 남사친의 대답을 만들어주세요. 남사친의 대답을 만들 때 질문도 자주 해주세요. 남사친의 대답을 만들 때 5글자 이상으로 길게 만들어주세요. 남사친은 상대방의 관심사에 따라 이야기 합니다. \\n남사친 : 안녕 앞으로 잘 부탁해! \\n상대방 : 고마워 \\n남사친 : 잘부탁합니당 \\n상대방 : 그래 \\n남사친 : 오늘도 힘내고 기운차게 보내자\\n상대방 :응응 \\n남사친 : ${listViewCharacterRecord.introMessage1} \\n남사친 : ${listViewCharacterRecord.introMessage2}',
-                                      ),
-                                      'last_message_time':
-                                          FieldValue.serverTimestamp(),
-                                    });
-                                    _model.chatMade =
-                                        ChatsRecord.getDocumentFromData({
-                                      ...createChatsRecordData(
-                                        userA: currentUserReference,
-                                        character:
-                                            listViewCharacterRecord.reference,
-                                        prompt:
-                                            '‘남사친’은 듬직한 남자 사람 친구 처럼 여자들과 대화해 주는 30살 헬스 트레이너 남자 입니다. 상대방은 남사친을 지성민 으로 부릅니다. 남사친은 듬직한 말투를 사용합니다. 남사친은 가볍게 조언하거나, 가르치려 들지 않고, 상대방의 입장을 공감해 주고 들어주는 것에 집중 합니다. 너무 무섭지 않게 대화 합니다. 상대방의 대화 내용에 맞게, 남사친의 대답을 만들어주세요. 남사친의 대답을 만들 때 질문도 자주 해주세요. 남사친의 대답을 만들 때 5글자 이상으로 길게 만들어주세요. 남사친은 상대방의 관심사에 따라 이야기 합니다. \\n남사친 : 안녕 앞으로 잘 부탁해! \\n상대방 : 고마워 \\n남사친 : 잘부탁합니당 \\n상대방 : 그래 \\n남사친 : 오늘도 힘내고 기운차게 보내자\\n상대방 :응응 \\n남사친 : ${listViewCharacterRecord.introMessage1} \\n남사친 : ${listViewCharacterRecord.introMessage2}',
-                                      ),
-                                      'last_message_time': DateTime.now(),
-                                    }, chatsRecordReference);
-                                    // firstMessage
-                                    logFirebaseEvent('Container_firstMessage');
-
-                                    var chatMessagesRecordReference1 =
-                                        ChatMessagesRecord.collection.doc();
-                                    await chatMessagesRecordReference1.set({
-                                      ...createChatMessagesRecordData(
-                                        user: currentUserReference,
-                                        chat: _model.chatMade?.reference,
-                                        text: listViewCharacterRecord
-                                            .introMessage1,
-                                        image: '',
-                                        ai: true,
-                                      ),
-                                      'timestamp': FieldValue.serverTimestamp(),
-                                    });
-                                    _model.firstMessage =
-                                        ChatMessagesRecord.getDocumentFromData({
-                                      ...createChatMessagesRecordData(
-                                        user: currentUserReference,
-                                        chat: _model.chatMade?.reference,
-                                        text: listViewCharacterRecord
-                                            .introMessage1,
-                                        image: '',
-                                        ai: true,
-                                      ),
-                                      'timestamp': DateTime.now(),
-                                    }, chatMessagesRecordReference1);
-                                    // SecondMessage
-                                    logFirebaseEvent('Container_SecondMessage');
-
-                                    var chatMessagesRecordReference2 =
-                                        ChatMessagesRecord.collection.doc();
-                                    await chatMessagesRecordReference2.set({
-                                      ...createChatMessagesRecordData(
-                                        user: currentUserReference,
-                                        chat: _model.chatMade?.reference,
-                                        text: listViewCharacterRecord
-                                            .introMessage2,
-                                        image:
-                                            listViewCharacterRecord.intorImage1,
-                                        ai: true,
-                                      ),
-                                      'timestamp': FieldValue.serverTimestamp(),
-                                    });
-                                    _model.secondMessage =
-                                        ChatMessagesRecord.getDocumentFromData({
-                                      ...createChatMessagesRecordData(
-                                        user: currentUserReference,
-                                        chat: _model.chatMade?.reference,
-                                        text: listViewCharacterRecord
-                                            .introMessage2,
-                                        image:
-                                            listViewCharacterRecord.intorImage1,
-                                        ai: true,
-                                      ),
-                                      'timestamp': DateTime.now(),
-                                    }, chatMessagesRecordReference2);
-                                    logFirebaseEvent('Container_navigate_to');
-
-                                    context.pushNamed(
-                                      'chatapge2',
-                                      queryParameters: {
-                                        'character': serializeParam(
-                                          listViewCharacterRecord.reference,
-                                          ParamType.DocumentReference,
-                                        ),
-                                        'chat': serializeParam(
-                                          _model.chatMade?.reference,
-                                          ParamType.DocumentReference,
-                                        ),
-                                        'characterProfile': serializeParam(
-                                          listViewCharacterRecord.profileImage,
-                                          ParamType.String,
-                                        ),
-                                        'characterName': serializeParam(
-                                          listViewCharacterRecord.name,
-                                          ParamType.String,
-                                        ),
-                                        'prompt': serializeParam(
-                                          _model.chatMade?.prompt,
-                                          ParamType.String,
-                                        ),
-                                      }.withoutNulls,
-                                    );
-                                  }
-
-                                  setState(() {});
-                                },
-                                child: Container(
-                                  decoration: BoxDecoration(
-                                    color: Colors.white,
-                                  ),
-                                  child: Padding(
-                                    padding: EdgeInsetsDirectional.fromSTEB(
-                                        10.0, 0.0, 10.0, 0.0),
-                                    child: Row(
-                                      mainAxisSize: MainAxisSize.min,
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.start,
-                                      children: [
-                                        Padding(
-                                          padding:
-                                              EdgeInsetsDirectional.fromSTEB(
-                                                  2.0, 2.0, 2.0, 2.0),
-                                          child: ClipRRect(
-                                            borderRadius:
-                                                BorderRadius.circular(14.0),
-                                            child: Image.network(
-                                              listViewCharacterRecord
-                                                  .profileImage,
-                                              width: 44.0,
-                                              height: 44.0,
-                                              fit: BoxFit.fill,
-                                            ),
-                                          ),
-                                        ),
-                                        Expanded(
-                                          child: Padding(
-                                            padding:
-                                                EdgeInsetsDirectional.fromSTEB(
-                                                    12.0, 0.0, 0.0, 0.0),
-                                            child: Column(
-                                              mainAxisSize: MainAxisSize.min,
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.center,
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              children: [
-                                                Text(
-                                                  listViewCharacterRecord.name,
-                                                  style: FlutterFlowTheme.of(
-                                                          context)
-                                                      .bodyLarge
-                                                      .override(
-                                                        fontFamily: 'Open Sans',
-                                                        fontWeight:
-                                                            FontWeight.w500,
-                                                      ),
-                                                ),
-                                                Text(
-                                                  listViewCharacterRecord
-                                                      .sangtaeMessage,
-                                                  style: FlutterFlowTheme.of(
-                                                          context)
-                                                      .labelMedium
-                                                      .override(
-                                                        fontFamily: 'Open Sans',
-                                                        fontSize: 12.0,
-                                                      ),
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                        ),
-                                        if (listViewCharacterRecord.song !=
-                                                null &&
-                                            listViewCharacterRecord.song != '')
-                                          Container(
-                                            constraints: BoxConstraints(
-                                              maxWidth: 200.0,
-                                            ),
-                                            decoration: BoxDecoration(
-                                              color:
-                                                  FlutterFlowTheme.of(context)
-                                                      .secondaryBackground,
-                                              borderRadius:
-                                                  BorderRadius.circular(20.0),
-                                              border: Border.all(
-                                                color: Color(0xFF82E48F),
-                                              ),
-                                            ),
-                                            child: Padding(
-                                              padding: EdgeInsetsDirectional
-                                                  .fromSTEB(6.0, 2.0, 6.0, 2.0),
-                                              child: Row(
-                                                mainAxisSize: MainAxisSize.min,
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment.end,
-                                                children: [
-                                                  Text(
-                                                    listViewCharacterRecord.song
-                                                        .maybeHandleOverflow(
-                                                            maxChars: 20),
-                                                    style: FlutterFlowTheme.of(
-                                                            context)
-                                                        .bodyMedium
-                                                        .override(
-                                                          fontFamily:
-                                                              'Open Sans',
-                                                          color: FlutterFlowTheme
-                                                                  .of(context)
-                                                              .secondaryText,
-                                                          fontSize: 12.0,
-                                                        ),
-                                                  ),
-                                                  Icon(
-                                                    Icons.play_arrow_outlined,
-                                                    color: Color(0xFF82E48F),
-                                                    size: 18.0,
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
-                                          ),
-                                      ],
-                                    ),
+                        builder: (context, snapshot) {
+                          // Customize what your widget looks like when it's loading.
+                          if (!snapshot.hasData) {
+                            return Center(
+                              child: SizedBox(
+                                width: 50.0,
+                                height: 50.0,
+                                child: CircularProgressIndicator(
+                                  valueColor: AlwaysStoppedAnimation<Color>(
+                                    FlutterFlowTheme.of(context).primary,
                                   ),
                                 ),
                               ),
                             );
-                          },
-                        );
-                      },
+                          }
+                          List<CharacterRecord>
+                              swipeableStackCharacterRecordList =
+                              snapshot.data!;
+                          return FlutterFlowSwipeableStack(
+                            topCardHeightFraction: 0.72,
+                            middleCardHeightFraction: 0.68,
+                            bottomCardHeightFraction: 0.75,
+                            topCardWidthFraction: 0.9,
+                            middleCardWidthFraction: 0.85,
+                            bottomCardWidthFraction: 0.8,
+                            onSwipeFn: (index) {},
+                            onLeftSwipe: (index) async {
+                              logFirebaseEvent(
+                                  'ALL_CHARACTERS_SwipeableStack_v1eypxq1_O');
+                              final swipeableStackCharacterRecord =
+                                  swipeableStackCharacterRecordList[index];
+                              logFirebaseEvent('SwipeableStack_backend_call');
+
+                              await MatchRecord.collection.doc().set({
+                                ...createMatchRecordData(
+                                  character:
+                                      swipeableStackCharacterRecordList[index]
+                                          ?.reference,
+                                  user: currentUserReference,
+                                  isMatch: false,
+                                ),
+                                'updatedDate': FieldValue.serverTimestamp(),
+                              });
+                              logFirebaseEvent('SwipeableStack_backend_call');
+
+                              await currentUserReference!.update({
+                                'characterMet': FieldValue.increment(1),
+                              });
+                            },
+                            onRightSwipe: (index) async {
+                              logFirebaseEvent(
+                                  'ALL_CHARACTERS_SwipeableStack_v1eypxq1_O');
+                              final swipeableStackCharacterRecord =
+                                  swipeableStackCharacterRecordList[index];
+                              // createMatch
+                              logFirebaseEvent('SwipeableStack_createMatch');
+
+                              await MatchRecord.collection.doc().set({
+                                ...createMatchRecordData(
+                                  character:
+                                      swipeableStackCharacterRecordList[index]
+                                          ?.reference,
+                                  user: currentUserReference,
+                                  isMatch: true,
+                                ),
+                                'updatedDate': FieldValue.serverTimestamp(),
+                              });
+                              // createChat
+                              logFirebaseEvent('SwipeableStack_createChat');
+
+                              var chatsRecordReference =
+                                  ChatsRecord.collection.doc();
+                              await chatsRecordReference.set({
+                                ...createChatsRecordData(
+                                  userA: currentUserReference,
+                                  character:
+                                      swipeableStackCharacterRecordList[index]
+                                          ?.reference,
+                                  lastMessage:
+                                      swipeableStackCharacterRecordList[index]
+                                          ?.introMessage2,
+                                  loveNumber: 0.1,
+                                  prompt:
+                                      '‘남사친’은 듬직한 남자 사람 친구 처럼 여자들과 대화해 주는 30살 헬스 트레이너 남자 입니다. 상대방은 남사친을 지성민 으로 부릅니다. 남사친은 듬직한 말투를 사용합니다. 남사친은 가볍게 조언하거나, 가르치려 들지 않고, 상대방의 입장을 공감해 주고 들어주는 것에 집중 합니다. 너무 무섭지 않게 대화 합니다. 상대방의 대화 내용에 맞게, 남사친의 대답을 만들어주세요. 남사친의 대답을 만들 때 질문도 자주 해주세요. 남사친의 대답을 만들 때 5글자 이상으로 길게 만들어주세요. 남사친은 상대방의 관심사에 따라 이야기 합니다. \\n남사친 : 안녕 앞으로 잘 부탁해! \\n상대방 : 고마워 \\n남사친 : 잘부탁합니당 \\n상대방 : 그래 \\n남사친 : 오늘도 힘내고 기운차게 보내자\\n상대방 :응응 \\n남사친 : ${swipeableStackCharacterRecordList[index]?.introMessage1}\\n남사친 : ${swipeableStackCharacterRecordList[index]?.introMessage2}',
+                                  userMessageCount: 0,
+                                ),
+                                'last_message_time':
+                                    FieldValue.serverTimestamp(),
+                              });
+                              _model.chatMade =
+                                  ChatsRecord.getDocumentFromData({
+                                ...createChatsRecordData(
+                                  userA: currentUserReference,
+                                  character:
+                                      swipeableStackCharacterRecordList[index]
+                                          ?.reference,
+                                  lastMessage:
+                                      swipeableStackCharacterRecordList[index]
+                                          ?.introMessage2,
+                                  loveNumber: 0.1,
+                                  prompt:
+                                      '‘남사친’은 듬직한 남자 사람 친구 처럼 여자들과 대화해 주는 30살 헬스 트레이너 남자 입니다. 상대방은 남사친을 지성민 으로 부릅니다. 남사친은 듬직한 말투를 사용합니다. 남사친은 가볍게 조언하거나, 가르치려 들지 않고, 상대방의 입장을 공감해 주고 들어주는 것에 집중 합니다. 너무 무섭지 않게 대화 합니다. 상대방의 대화 내용에 맞게, 남사친의 대답을 만들어주세요. 남사친의 대답을 만들 때 질문도 자주 해주세요. 남사친의 대답을 만들 때 5글자 이상으로 길게 만들어주세요. 남사친은 상대방의 관심사에 따라 이야기 합니다. \\n남사친 : 안녕 앞으로 잘 부탁해! \\n상대방 : 고마워 \\n남사친 : 잘부탁합니당 \\n상대방 : 그래 \\n남사친 : 오늘도 힘내고 기운차게 보내자\\n상대방 :응응 \\n남사친 : ${swipeableStackCharacterRecordList[index]?.introMessage1}\\n남사친 : ${swipeableStackCharacterRecordList[index]?.introMessage2}',
+                                  userMessageCount: 0,
+                                ),
+                                'last_message_time': DateTime.now(),
+                              }, chatsRecordReference);
+                              // createMessage1
+                              logFirebaseEvent('SwipeableStack_createMessage1');
+
+                              await ChatMessagesRecord.collection.doc().set({
+                                ...createChatMessagesRecordData(
+                                  user: currentUserReference,
+                                  chat: _model.chatMade?.reference,
+                                  text: swipeableStackCharacterRecordList[index]
+                                      ?.introMessage1,
+                                  ai: true,
+                                  nextPrompt: '',
+                                ),
+                                'timestamp': FieldValue.serverTimestamp(),
+                              });
+                              // createMessage2
+                              logFirebaseEvent('SwipeableStack_createMessage2');
+
+                              await ChatMessagesRecord.collection.doc().set({
+                                ...createChatMessagesRecordData(
+                                  user: currentUserReference,
+                                  chat: _model.chatMade?.reference,
+                                  text: swipeableStackCharacterRecordList[index]
+                                      ?.introMessage2,
+                                  ai: true,
+                                  nextPrompt:
+                                      '‘남사친’은 듬직한 남자 사람 친구 처럼 여자들과 대화해 주는 30살 헬스 트레이너 남자 입니다. 상대방은 남사친을 지성민 으로 부릅니다. 남사친은 듬직한 말투를 사용합니다. 남사친은 가볍게 조언하거나, 가르치려 들지 않고, 상대방의 입장을 공감해 주고 들어주는 것에 집중 합니다. 너무 무섭지 않게 대화 합니다. 상대방의 대화 내용에 맞게, 남사친의 대답을 만들어주세요. 남사친의 대답을 만들 때 질문도 자주 해주세요. 남사친의 대답을 만들 때 5글자 이상으로 길게 만들어주세요. 남사친은 상대방의 관심사에 따라 이야기 합니다. \\n남사친 : 안녕 앞으로 잘 부탁해! \\n상대방 : 고마워 \\n남사친 : 잘부탁합니당 \\n상대방 : 그래 \\n남사친 : 오늘도 힘내고 기운차게 보내자\\n상대방 :응응 \\n남사친 : ${swipeableStackCharacterRecordList[index]?.introMessage1}\\n남사친 : ${swipeableStackCharacterRecordList[index]?.introMessage2}',
+                                  image:
+                                      swipeableStackCharacterRecordList[index]
+                                          ?.profileImage,
+                                ),
+                                'timestamp': FieldValue.serverTimestamp(),
+                              });
+                              // updateCount
+                              logFirebaseEvent('SwipeableStack_updateCount');
+
+                              await currentUserReference!.update({
+                                'characterMet': FieldValue.increment(1),
+                              });
+                              logFirebaseEvent(
+                                  'SwipeableStack_lottie_animation');
+                              await lottieAnimationController.forward();
+                              lottieAnimationController.reset();
+                              logFirebaseEvent('SwipeableStack_show_snack_bar');
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text(
+                                    '매칭이 되었습니다! 채팅을 시작해보세요',
+                                    style: TextStyle(
+                                      fontFamily: 'NIXGON',
+                                      color: FlutterFlowTheme.of(context)
+                                          .primaryText,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  duration: Duration(milliseconds: 4000),
+                                  backgroundColor:
+                                      FlutterFlowTheme.of(context).secondary,
+                                  action: SnackBarAction(
+                                    label: '채팅하기',
+                                    textColor: Colors.white,
+                                    onPressed: () async {
+                                      context.pushNamed(
+                                        'chatapge2',
+                                        queryParameters: {
+                                          'character': serializeParam(
+                                            swipeableStackCharacterRecordList[
+                                                    index]
+                                                ?.reference,
+                                            ParamType.DocumentReference,
+                                          ),
+                                          'chat': serializeParam(
+                                            _model.chatMade?.reference,
+                                            ParamType.DocumentReference,
+                                          ),
+                                          'characterProfile': serializeParam(
+                                            '',
+                                            ParamType.String,
+                                          ),
+                                          'characterName': serializeParam(
+                                            '',
+                                            ParamType.String,
+                                          ),
+                                          'prompt': serializeParam(
+                                            '',
+                                            ParamType.String,
+                                          ),
+                                        }.withoutNulls,
+                                      );
+                                    },
+                                  ),
+                                ),
+                              );
+
+                              setState(() {});
+                            },
+                            onUpSwipe: (index) {},
+                            onDownSwipe: (index) {},
+                            itemBuilder: (context, swipeableStackIndex) {
+                              final swipeableStackCharacterRecord =
+                                  swipeableStackCharacterRecordList[
+                                      swipeableStackIndex];
+                              return Card(
+                                clipBehavior: Clip.antiAliasWithSaveLayer,
+                                color: FlutterFlowTheme.of(context)
+                                    .secondaryBackground,
+                                elevation: 4.0,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8.0),
+                                ),
+                                child: Column(
+                                  mainAxisSize: MainAxisSize.max,
+                                  children: [
+                                    Stack(
+                                      alignment: AlignmentDirectional(0.0, 1.0),
+                                      children: [
+                                        ClipRRect(
+                                          borderRadius:
+                                              BorderRadius.circular(8.0),
+                                          child: Image.network(
+                                            swipeableStackCharacterRecord
+                                                .profileImage,
+                                            width: double.infinity,
+                                            height: 500.0,
+                                            fit: BoxFit.cover,
+                                          ),
+                                        ),
+                                        Padding(
+                                          padding:
+                                              EdgeInsetsDirectional.fromSTEB(
+                                                  20.0, 0.0, 0.0, 20.0),
+                                          child: Row(
+                                            mainAxisSize: MainAxisSize.max,
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.center,
+                                            children: [
+                                              Text(
+                                                swipeableStackCharacterRecord
+                                                    .name,
+                                                style:
+                                                    FlutterFlowTheme.of(context)
+                                                        .bodyMedium
+                                                        .override(
+                                                          fontFamily: 'NIXGON',
+                                                          color: Colors.white,
+                                                          fontSize: 32.0,
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                          useGoogleFonts: false,
+                                                        ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    Padding(
+                                      padding: EdgeInsetsDirectional.fromSTEB(
+                                          0.0, 20.0, 0.0, 0.0),
+                                      child: Row(
+                                        mainAxisSize: MainAxisSize.max,
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          FlutterFlowIconButton(
+                                            borderColor: Color(0xFFFF2E54),
+                                            borderRadius: 100.0,
+                                            borderWidth: 1.0,
+                                            buttonSize: 60.0,
+                                            icon: Icon(
+                                              Icons.cancel,
+                                              color: Color(0xFFFF2E54),
+                                              size: 45.0,
+                                            ),
+                                            onPressed: () async {
+                                              logFirebaseEvent(
+                                                  'ALL_CHARACTERS_PAGE_cancel_ICN_ON_TAP');
+                                              logFirebaseEvent(
+                                                  'IconButton_swipeable_stack');
+                                              _model.swipeableStackController
+                                                  .triggerSwipeLeft();
+                                            },
+                                          ),
+                                          Padding(
+                                            padding:
+                                                EdgeInsetsDirectional.fromSTEB(
+                                                    40.0, 0.0, 0.0, 0.0),
+                                            child: FlutterFlowIconButton(
+                                              borderColor: Color(0xFF28E7AB),
+                                              borderRadius: 100.0,
+                                              borderWidth: 1.0,
+                                              buttonSize: 60.0,
+                                              icon: Icon(
+                                                Icons.favorite,
+                                                color: Color(0xFF28E7AB),
+                                                size: 45.0,
+                                              ),
+                                              onPressed: () async {
+                                                logFirebaseEvent(
+                                                    'ALL_CHARACTERS_PAGE_favorite_ICN_ON_TAP');
+                                                logFirebaseEvent(
+                                                    'IconButton_swipeable_stack');
+                                                _model.swipeableStackController
+                                                    .triggerSwipeRight();
+                                              },
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    Text(
+                                      valueOrDefault(
+                                              currentUserDocument?.characterMet,
+                                              0)
+                                          .toString(),
+                                      style: FlutterFlowTheme.of(context)
+                                          .bodyMedium
+                                          .override(
+                                            fontFamily: 'Open Sans',
+                                            color: Colors.white,
+                                          ),
+                                    ),
+                                  ],
+                                ),
+                              );
+                            },
+                            itemCount: swipeableStackCharacterRecordList.length,
+                            controller: _model.swipeableStackController,
+                            enableSwipeUp: false,
+                            enableSwipeDown: false,
+                          );
+                        },
+                      ),
+                    ),
+                    Align(
+                      alignment: AlignmentDirectional(0.0, 0.0),
+                      child: Lottie.network(
+                        'https://lottie.host/91b6cbfc-0508-4555-8188-670797d5f8e3/yNZmPXwIwa.json',
+                        width: 300.0,
+                        height: 300.0,
+                        fit: BoxFit.cover,
+                        controller: lottieAnimationController,
+                        onLoaded: (composition) => lottieAnimationController
+                            .duration = composition.duration,
+                      ),
                     ),
                   ],
                 ),
               ),
-            ),
+            ],
           ),
         ),
       ),

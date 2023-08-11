@@ -62,6 +62,16 @@ class ChatsRecord extends FirestoreRecord {
   DocumentReference? get userB => _userB;
   bool hasUserB() => _userB != null;
 
+  // "user_message_count" field.
+  int? _userMessageCount;
+  int get userMessageCount => _userMessageCount ?? 0;
+  bool hasUserMessageCount() => _userMessageCount != null;
+
+  // "love_number" field.
+  double? _loveNumber;
+  double get loveNumber => _loveNumber ?? 0.0;
+  bool hasLoveNumber() => _loveNumber != null;
+
   void _initializeFields() {
     _userA = snapshotData['user_a'] as DocumentReference?;
     _lastMessage = snapshotData['last_message'] as String?;
@@ -73,6 +83,8 @@ class ChatsRecord extends FirestoreRecord {
     _prompt = snapshotData['prompt'] as String?;
     _users = getDataList(snapshotData['users']);
     _userB = snapshotData['user_b'] as DocumentReference?;
+    _userMessageCount = castToType<int>(snapshotData['user_message_count']);
+    _loveNumber = castToType<double>(snapshotData['love_number']);
   }
 
   static CollectionReference get collection =>
@@ -116,6 +128,8 @@ Map<String, dynamic> createChatsRecordData({
   DocumentReference? character,
   String? prompt,
   DocumentReference? userB,
+  int? userMessageCount,
+  double? loveNumber,
 }) {
   final firestoreData = mapToFirestore(
     <String, dynamic>{
@@ -126,6 +140,8 @@ Map<String, dynamic> createChatsRecordData({
       'character': character,
       'prompt': prompt,
       'user_b': userB,
+      'user_message_count': userMessageCount,
+      'love_number': loveNumber,
     }.withoutNulls,
   );
 
@@ -146,7 +162,9 @@ class ChatsRecordDocumentEquality implements Equality<ChatsRecord> {
         e1?.character == e2?.character &&
         e1?.prompt == e2?.prompt &&
         listEquality.equals(e1?.users, e2?.users) &&
-        e1?.userB == e2?.userB;
+        e1?.userB == e2?.userB &&
+        e1?.userMessageCount == e2?.userMessageCount &&
+        e1?.loveNumber == e2?.loveNumber;
   }
 
   @override
@@ -159,7 +177,9 @@ class ChatsRecordDocumentEquality implements Equality<ChatsRecord> {
         e?.character,
         e?.prompt,
         e?.users,
-        e?.userB
+        e?.userB,
+        e?.userMessageCount,
+        e?.loveNumber
       ]);
 
   @override

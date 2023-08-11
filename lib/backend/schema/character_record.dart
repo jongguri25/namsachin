@@ -51,6 +51,16 @@ class CharacterRecord extends FirestoreRecord {
   String get song => _song ?? '';
   bool hasSong() => _song != null;
 
+  // "uid" field.
+  String? _uid;
+  String get uid => _uid ?? '';
+  bool hasUid() => _uid != null;
+
+  // "order" field.
+  int? _order;
+  int get order => _order ?? 0;
+  bool hasOrder() => _order != null;
+
   void _initializeFields() {
     _name = snapshotData['name'] as String?;
     _profileImage = snapshotData['profile_image'] as String?;
@@ -59,6 +69,8 @@ class CharacterRecord extends FirestoreRecord {
     _introMessage2 = snapshotData['intro_message_2'] as String?;
     _intorImage1 = snapshotData['intor_image_1'] as String?;
     _song = snapshotData['song'] as String?;
+    _uid = snapshotData['uid'] as String?;
+    _order = castToType<int>(snapshotData['order']);
   }
 
   static CollectionReference get collection =>
@@ -103,6 +115,8 @@ Map<String, dynamic> createCharacterRecordData({
   String? introMessage2,
   String? intorImage1,
   String? song,
+  String? uid,
+  int? order,
 }) {
   final firestoreData = mapToFirestore(
     <String, dynamic>{
@@ -113,6 +127,8 @@ Map<String, dynamic> createCharacterRecordData({
       'intro_message_2': introMessage2,
       'intor_image_1': intorImage1,
       'song': song,
+      'uid': uid,
+      'order': order,
     }.withoutNulls,
   );
 
@@ -130,7 +146,9 @@ class CharacterRecordDocumentEquality implements Equality<CharacterRecord> {
         e1?.introMessage1 == e2?.introMessage1 &&
         e1?.introMessage2 == e2?.introMessage2 &&
         e1?.intorImage1 == e2?.intorImage1 &&
-        e1?.song == e2?.song;
+        e1?.song == e2?.song &&
+        e1?.uid == e2?.uid &&
+        e1?.order == e2?.order;
   }
 
   @override
@@ -141,7 +159,9 @@ class CharacterRecordDocumentEquality implements Equality<CharacterRecord> {
         e?.introMessage1,
         e?.introMessage2,
         e?.intorImage1,
-        e?.song
+        e?.song,
+        e?.uid,
+        e?.order
       ]);
 
   @override

@@ -1267,6 +1267,7 @@ class _SettingWidgetState extends State<SettingWidget>
                                                                 '소심한 고양이',
                                                             photoUrl:
                                                                 'https://storage.googleapis.com/flutterflow-io-6f20.appspot.com/projects/livetest2-hx0jlv/assets/0rsbnw4v226f/image_106.png',
+                                                            characterMet: 0,
                                                           ));
 
                                                       context.goNamedAuth(
