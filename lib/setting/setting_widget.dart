@@ -1481,7 +1481,7 @@ class _SettingWidgetState extends State<SettingWidget>
                                                                     .min,
                                                             children: [
                                                               Text(
-                                                                '☑️ 개인정보 수집 및 이용 동의 ',
+                                                                '☑️ 개인정보처리방침',
                                                                 style: FlutterFlowTheme.of(
                                                                         context)
                                                                     .bodyMedium
@@ -2061,7 +2061,7 @@ class _SettingWidgetState extends State<SettingWidget>
                                       mainAxisSize: MainAxisSize.min,
                                       children: [
                                         Text(
-                                          '☑️ 개인정보 수집 및 이용 동의 ',
+                                          '☑️ 개인정보처리방침',
                                           style: FlutterFlowTheme.of(context)
                                               .bodyMedium
                                               .override(
