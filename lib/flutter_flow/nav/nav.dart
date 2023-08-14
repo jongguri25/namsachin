@@ -142,6 +142,19 @@ GoRouter createRouter(AppStateNotifier appStateNotifier) => GoRouter(
           name: 'Profile16CreateEdit',
           path: '/profile16CreateEdit',
           builder: (context, params) => Profile16CreateEditWidget(),
+        ),
+        FFRoute(
+          name: 'Details09PlayerProfile',
+          path: '/details09PlayerProfile',
+          builder: (context, params) => Details09PlayerProfileWidget(),
+        ),
+        FFRoute(
+          name: 'photoUpload',
+          path: '/photoUpload',
+          builder: (context, params) => PhotoUploadWidget(
+            character: params.getParam(
+                'character', ParamType.DocumentReference, false, ['character']),
+          ),
         )
       ].map((r) => r.toRoute(appStateNotifier)).toList(),
     );

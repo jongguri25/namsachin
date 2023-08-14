@@ -72,6 +72,11 @@ class ChatsRecord extends FirestoreRecord {
   double get loveNumber => _loveNumber ?? 0.0;
   bool hasLoveNumber() => _loveNumber != null;
 
+  // "imageCount" field.
+  int? _imageCount;
+  int get imageCount => _imageCount ?? 0;
+  bool hasImageCount() => _imageCount != null;
+
   void _initializeFields() {
     _userA = snapshotData['user_a'] as DocumentReference?;
     _lastMessage = snapshotData['last_message'] as String?;
@@ -85,6 +90,7 @@ class ChatsRecord extends FirestoreRecord {
     _userB = snapshotData['user_b'] as DocumentReference?;
     _userMessageCount = castToType<int>(snapshotData['user_message_count']);
     _loveNumber = castToType<double>(snapshotData['love_number']);
+    _imageCount = castToType<int>(snapshotData['imageCount']);
   }
 
   static CollectionReference get collection =>
@@ -130,6 +136,7 @@ Map<String, dynamic> createChatsRecordData({
   DocumentReference? userB,
   int? userMessageCount,
   double? loveNumber,
+  int? imageCount,
 }) {
   final firestoreData = mapToFirestore(
     <String, dynamic>{
@@ -142,6 +149,7 @@ Map<String, dynamic> createChatsRecordData({
       'user_b': userB,
       'user_message_count': userMessageCount,
       'love_number': loveNumber,
+      'imageCount': imageCount,
     }.withoutNulls,
   );
 
@@ -164,7 +172,8 @@ class ChatsRecordDocumentEquality implements Equality<ChatsRecord> {
         listEquality.equals(e1?.users, e2?.users) &&
         e1?.userB == e2?.userB &&
         e1?.userMessageCount == e2?.userMessageCount &&
-        e1?.loveNumber == e2?.loveNumber;
+        e1?.loveNumber == e2?.loveNumber &&
+        e1?.imageCount == e2?.imageCount;
   }
 
   @override
@@ -179,7 +188,8 @@ class ChatsRecordDocumentEquality implements Equality<ChatsRecord> {
         e?.users,
         e?.userB,
         e?.userMessageCount,
-        e?.loveNumber
+        e?.loveNumber,
+        e?.imageCount
       ]);
 
   @override

@@ -10,6 +10,7 @@ import 'schema/chats_record.dart';
 import 'schema/chat_messages_record.dart';
 import 'schema/character_record.dart';
 import 'schema/match_record.dart';
+import 'schema/character_image_record.dart';
 
 export 'dart:async' show StreamSubscription;
 export 'package:cloud_firestore/cloud_firestore.dart';
@@ -22,6 +23,7 @@ export 'schema/chats_record.dart';
 export 'schema/chat_messages_record.dart';
 export 'schema/character_record.dart';
 export 'schema/match_record.dart';
+export 'schema/character_image_record.dart';
 
 /// Functions to query UsersRecords (as a Stream and as a Future).
 Future<int> queryUsersRecordCount({
@@ -203,6 +205,46 @@ Future<List<MatchRecord>> queryMatchRecordOnce({
     queryCollectionOnce(
       MatchRecord.collection,
       MatchRecord.fromSnapshot,
+      queryBuilder: queryBuilder,
+      limit: limit,
+      singleRecord: singleRecord,
+    );
+
+/// Functions to query CharacterImageRecords (as a Stream and as a Future).
+Future<int> queryCharacterImageRecordCount({
+  DocumentReference? parent,
+  Query Function(Query)? queryBuilder,
+  int limit = -1,
+}) =>
+    queryCollectionCount(
+      CharacterImageRecord.collection(parent),
+      queryBuilder: queryBuilder,
+      limit: limit,
+    );
+
+Stream<List<CharacterImageRecord>> queryCharacterImageRecord({
+  DocumentReference? parent,
+  Query Function(Query)? queryBuilder,
+  int limit = -1,
+  bool singleRecord = false,
+}) =>
+    queryCollection(
+      CharacterImageRecord.collection(parent),
+      CharacterImageRecord.fromSnapshot,
+      queryBuilder: queryBuilder,
+      limit: limit,
+      singleRecord: singleRecord,
+    );
+
+Future<List<CharacterImageRecord>> queryCharacterImageRecordOnce({
+  DocumentReference? parent,
+  Query Function(Query)? queryBuilder,
+  int limit = -1,
+  bool singleRecord = false,
+}) =>
+    queryCollectionOnce(
+      CharacterImageRecord.collection(parent),
+      CharacterImageRecord.fromSnapshot,
       queryBuilder: queryBuilder,
       limit: limit,
       singleRecord: singleRecord,

@@ -1,15 +1,19 @@
 import '/auth/firebase_auth/auth_util.dart';
 import '/backend/api_requests/api_calls.dart';
 import '/backend/backend.dart';
+import '/components/collect_photo_widget.dart';
+import '/flutter_flow/flutter_flow_expanded_image_view.dart';
 import '/flutter_flow/flutter_flow_icon_button.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
+import '/flutter_flow/custom_functions.dart' as functions;
 import '/flutter_flow/random_data_util.dart' as random_data;
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lottie/lottie.dart';
+import 'package:page_transition/page_transition.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 import 'package:provider/provider.dart';
 import 'chatapge2_model.dart';
@@ -79,8 +83,8 @@ class _Chatapge2WidgetState extends State<Chatapge2Widget>
   Widget build(BuildContext context) {
     context.watch<FFAppState>();
     final lottieAnimationController = AnimationController(vsync: this);
-    return StreamBuilder<ChatsRecord>(
-      stream: ChatsRecord.getDocument(widget.chat!),
+    return FutureBuilder<ChatsRecord>(
+      future: ChatsRecord.getDocumentOnce(widget.chat!),
       builder: (context, snapshot) {
         // Customize what your widget looks like when it's loading.
         if (!snapshot.hasData) {
@@ -129,58 +133,342 @@ class _Chatapge2WidgetState extends State<Chatapge2Widget>
                       mainAxisSize: MainAxisSize.max,
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Row(
+                        Column(
                           mainAxisSize: MainAxisSize.max,
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            FlutterFlowIconButton(
-                              borderColor: Colors.transparent,
-                              borderRadius: 30.0,
-                              borderWidth: 1.0,
-                              buttonSize: 60.0,
-                              icon: Icon(
-                                Icons.arrow_back_rounded,
-                                color: Color(0xFF101417),
-                                size: 30.0,
-                              ),
-                              onPressed: () async {
-                                logFirebaseEvent(
-                                    'CHATAPGE2_arrow_back_rounded_ICN_ON_TAP');
-                                logFirebaseEvent('IconButton_navigate_to');
-
-                                context.pushNamed('AllChatsPage');
-                              },
-                            ),
-                            Column(
+                            Row(
                               mainAxisSize: MainAxisSize.max,
-                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text(
-                                  widget.characterName!,
-                                  style: FlutterFlowTheme.of(context)
-                                      .headlineMedium
-                                      .override(
-                                        fontFamily: 'NIXGON',
-                                        color: Color(0xFF101417),
-                                        fontSize: 22.0,
-                                        useGoogleFonts: false,
-                                      ),
-                                ),
-                                Padding(
-                                  padding: EdgeInsetsDirectional.fromSTEB(
-                                      0.0, 4.0, 0.0, 0.0),
-                                  child: LinearPercentIndicator(
-                                    percent: chatapge2ChatsRecord.loveNumber,
-                                    width: 300.0,
-                                    lineHeight: 18.0,
-                                    animation: true,
-                                    progressColor: Color(0xFFFDE500),
-                                    backgroundColor:
-                                        FlutterFlowTheme.of(context).accent4,
-                                    barRadius: Radius.circular(10.0),
-                                    padding: EdgeInsets.zero,
+                                FlutterFlowIconButton(
+                                  borderColor: Colors.transparent,
+                                  borderRadius: 30.0,
+                                  borderWidth: 1.0,
+                                  buttonSize: 60.0,
+                                  icon: Icon(
+                                    Icons.arrow_back_rounded,
+                                    color: Color(0xFF101417),
+                                    size: 30.0,
                                   ),
+                                  onPressed: () async {
+                                    logFirebaseEvent(
+                                        'CHATAPGE2_arrow_back_rounded_ICN_ON_TAP');
+                                    logFirebaseEvent('IconButton_navigate_to');
+
+                                    context.pushNamed('AllChatsPage');
+                                  },
+                                ),
+                                Column(
+                                  mainAxisSize: MainAxisSize.max,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Row(
+                                      mainAxisSize: MainAxisSize.max,
+                                      children: [
+                                        Text(
+                                          widget.characterName!,
+                                          style: FlutterFlowTheme.of(context)
+                                              .headlineMedium
+                                              .override(
+                                                fontFamily: 'NIXGON',
+                                                color: Color(0xFF101417),
+                                                fontSize: 22.0,
+                                                useGoogleFonts: false,
+                                              ),
+                                        ),
+                                        Padding(
+                                          padding:
+                                              EdgeInsetsDirectional.fromSTEB(
+                                                  10.0, 0.0, 0.0, 0.0),
+                                          child: Text(
+                                            '호감도',
+                                            style: FlutterFlowTheme.of(context)
+                                                .headlineMedium
+                                                .override(
+                                                  fontFamily: 'NIXGON',
+                                                  color: Color(0xFFFDE500),
+                                                  fontSize: 22.0,
+                                                  fontWeight: FontWeight.w500,
+                                                  useGoogleFonts: false,
+                                                ),
+                                          ),
+                                        ),
+                                        Padding(
+                                          padding:
+                                              EdgeInsetsDirectional.fromSTEB(
+                                                  10.0, 0.0, 0.0, 0.0),
+                                          child: Text(
+                                            formatNumber(
+                                              chatapge2ChatsRecord.loveNumber,
+                                              formatType: FormatType.percent,
+                                            ),
+                                            style: FlutterFlowTheme.of(context)
+                                                .headlineMedium
+                                                .override(
+                                                  fontFamily: 'NIXGON',
+                                                  color: Color(0xFFFDE500),
+                                                  fontSize: 22.0,
+                                                  fontWeight: FontWeight.bold,
+                                                  useGoogleFonts: false,
+                                                ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    Padding(
+                                      padding: EdgeInsetsDirectional.fromSTEB(
+                                          0.0, 4.0, 0.0, 0.0),
+                                      child: Row(
+                                        mainAxisSize: MainAxisSize.max,
+                                        children: [
+                                          Stack(
+                                            children: [
+                                              LinearPercentIndicator(
+                                                percent: chatapge2ChatsRecord
+                                                    .loveNumber,
+                                                width: 300.0,
+                                                lineHeight: 18.0,
+                                                animation: true,
+                                                progressColor:
+                                                    Color(0xFFFDE500),
+                                                backgroundColor:
+                                                    FlutterFlowTheme.of(context)
+                                                        .accent4,
+                                                barRadius:
+                                                    Radius.circular(10.0),
+                                                padding: EdgeInsets.zero,
+                                              ),
+                                              ClipRRect(
+                                                borderRadius:
+                                                    BorderRadius.circular(8.0),
+                                                child: Image.asset(
+                                                  'assets/images/Frame_108.png',
+                                                  width: 300.0,
+                                                  height: 18.0,
+                                                  fit: BoxFit.cover,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ],
                                 ),
                               ],
+                            ),
+                            Padding(
+                              padding: EdgeInsetsDirectional.fromSTEB(
+                                  20.0, 0.0, 0.0, 10.0),
+                              child: FutureBuilder<List<CharacterImageRecord>>(
+                                future: queryCharacterImageRecordOnce(
+                                  parent: widget.character,
+                                  queryBuilder: (characterImageRecord) =>
+                                      characterImageRecord
+                                          .orderBy('imageCount'),
+                                ),
+                                builder: (context, snapshot) {
+                                  // Customize what your widget looks like when it's loading.
+                                  if (!snapshot.hasData) {
+                                    return Center(
+                                      child: SizedBox(
+                                        width: 50.0,
+                                        height: 50.0,
+                                        child: CircularProgressIndicator(
+                                          valueColor:
+                                              AlwaysStoppedAnimation<Color>(
+                                            FlutterFlowTheme.of(context)
+                                                .primary,
+                                          ),
+                                        ),
+                                      ),
+                                    );
+                                  }
+                                  List<CharacterImageRecord>
+                                      rowCharacterImageRecordList =
+                                      snapshot.data!;
+                                  return SingleChildScrollView(
+                                    scrollDirection: Axis.horizontal,
+                                    controller: _model.rowController1,
+                                    child: Row(
+                                      mainAxisSize: MainAxisSize.max,
+                                      children: List.generate(
+                                          rowCharacterImageRecordList.length,
+                                          (rowIndex) {
+                                        final rowCharacterImageRecord =
+                                            rowCharacterImageRecordList[
+                                                rowIndex];
+                                        return Padding(
+                                          padding:
+                                              EdgeInsetsDirectional.fromSTEB(
+                                                  0.0, 0.0, 10.0, 0.0),
+                                          child: Container(
+                                            width: 60.0,
+                                            height: 90.0,
+                                            child: Stack(
+                                              children: [
+                                                InkWell(
+                                                  splashColor:
+                                                      Colors.transparent,
+                                                  focusColor:
+                                                      Colors.transparent,
+                                                  hoverColor:
+                                                      Colors.transparent,
+                                                  highlightColor:
+                                                      Colors.transparent,
+                                                  onTap: () async {
+                                                    logFirebaseEvent(
+                                                        'CHATAPGE2_PAGE_Image_ishqvp5e_ON_TAP');
+                                                    logFirebaseEvent(
+                                                        'Image_expand_image');
+                                                    await Navigator.push(
+                                                      context,
+                                                      PageTransition(
+                                                        type: PageTransitionType
+                                                            .fade,
+                                                        child:
+                                                            FlutterFlowExpandedImageView(
+                                                          image: Image.network(
+                                                            rowCharacterImageRecord
+                                                                        .imageCount <=
+                                                                    (chatapge2ChatsRecord
+                                                                            .loveNumber *
+                                                                        10)
+                                                                ? rowCharacterImageRecord
+                                                                    .chatImage
+                                                                : 'https://i.ibb.co/r7Bct8L/Frame-21.png',
+                                                            fit: BoxFit.contain,
+                                                          ),
+                                                          allowRotation: false,
+                                                          tag: rowCharacterImageRecord
+                                                                      .imageCount <=
+                                                                  (chatapge2ChatsRecord
+                                                                          .loveNumber *
+                                                                      10)
+                                                              ? rowCharacterImageRecord
+                                                                  .chatImage
+                                                              : 'https://i.ibb.co/r7Bct8L/Frame-21.png',
+                                                          useHeroAnimation:
+                                                              true,
+                                                        ),
+                                                      ),
+                                                    );
+                                                  },
+                                                  child: Hero(
+                                                    tag: rowCharacterImageRecord
+                                                                .imageCount <=
+                                                            (chatapge2ChatsRecord
+                                                                    .loveNumber *
+                                                                10)
+                                                        ? rowCharacterImageRecord
+                                                            .chatImage
+                                                        : 'https://i.ibb.co/r7Bct8L/Frame-21.png',
+                                                    transitionOnUserGestures:
+                                                        true,
+                                                    child: ClipRRect(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              8.0),
+                                                      child: Image.network(
+                                                        rowCharacterImageRecord
+                                                                    .imageCount <=
+                                                                (chatapge2ChatsRecord
+                                                                        .loveNumber *
+                                                                    10)
+                                                            ? rowCharacterImageRecord
+                                                                .chatImage
+                                                            : 'https://i.ibb.co/r7Bct8L/Frame-21.png',
+                                                        width: 60.0,
+                                                        height: 90.0,
+                                                        fit: BoxFit.cover,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
+                                                Column(
+                                                  mainAxisSize:
+                                                      MainAxisSize.max,
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment
+                                                          .spaceBetween,
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.end,
+                                                  children: [
+                                                    Align(
+                                                      alignment:
+                                                          AlignmentDirectional(
+                                                              -1.0, -1.0),
+                                                      child: Padding(
+                                                        padding:
+                                                            EdgeInsetsDirectional
+                                                                .fromSTEB(
+                                                                    4.0,
+                                                                    4.0,
+                                                                    4.0,
+                                                                    4.0),
+                                                        child: Text(
+                                                          rowCharacterImageRecord
+                                                              .type,
+                                                          style: FlutterFlowTheme
+                                                                  .of(context)
+                                                              .bodyMedium
+                                                              .override(
+                                                                fontFamily:
+                                                                    'NIXGON',
+                                                                color: Color(
+                                                                    0xFFEB0021),
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .bold,
+                                                                useGoogleFonts:
+                                                                    false,
+                                                              ),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    Align(
+                                                      alignment:
+                                                          AlignmentDirectional(
+                                                              1.0, 1.0),
+                                                      child: Padding(
+                                                        padding:
+                                                            EdgeInsetsDirectional
+                                                                .fromSTEB(
+                                                                    4.0,
+                                                                    4.0,
+                                                                    4.0,
+                                                                    4.0),
+                                                        child: Text(
+                                                          '${rowCharacterImageRecord.imageCount.toString()}/10',
+                                                          textAlign:
+                                                              TextAlign.center,
+                                                          style: FlutterFlowTheme
+                                                                  .of(context)
+                                                              .bodyMedium
+                                                              .override(
+                                                                fontFamily:
+                                                                    'Open Sans',
+                                                                color: Colors
+                                                                    .white,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w500,
+                                                              ),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ].divide(
+                                                      SizedBox(height: 40.0)),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        );
+                                      }),
+                                    ),
+                                  );
+                                },
+                              ),
                             ),
                           ],
                         ),
@@ -430,11 +718,8 @@ class _Chatapge2WidgetState extends State<Chatapge2Widget>
                                                                   ],
                                                                 ),
                                                                 if (listViewChatMessagesRecord
-                                                                            .image !=
-                                                                        null &&
-                                                                    listViewChatMessagesRecord
-                                                                            .image !=
-                                                                        '')
+                                                                        .imageNumber !=
+                                                                    null)
                                                                   Padding(
                                                                     padding: EdgeInsetsDirectional
                                                                         .fromSTEB(
@@ -442,37 +727,77 @@ class _Chatapge2WidgetState extends State<Chatapge2Widget>
                                                                             10.0,
                                                                             0.0,
                                                                             0.0),
-                                                                    child:
-                                                                        Container(
-                                                                      width:
-                                                                          215.0,
-                                                                      height:
-                                                                          150.0,
-                                                                      decoration:
-                                                                          BoxDecoration(
-                                                                        color: FlutterFlowTheme.of(context)
-                                                                            .secondaryBackground,
-                                                                        image:
-                                                                            DecorationImage(
-                                                                          fit: BoxFit
-                                                                              .cover,
-                                                                          image:
-                                                                              Image.network(
-                                                                            listViewChatMessagesRecord.image,
-                                                                          ).image,
-                                                                        ),
-                                                                        borderRadius:
-                                                                            BorderRadius.only(
-                                                                          bottomLeft:
-                                                                              Radius.circular(24.0),
-                                                                          bottomRight:
-                                                                              Radius.circular(24.0),
-                                                                          topLeft:
-                                                                              Radius.circular(3.0),
-                                                                          topRight:
-                                                                              Radius.circular(24.0),
-                                                                        ),
+                                                                    child: StreamBuilder<
+                                                                        List<
+                                                                            CharacterImageRecord>>(
+                                                                      stream:
+                                                                          queryCharacterImageRecord(
+                                                                        parent:
+                                                                            widget.character,
+                                                                        queryBuilder: (characterImageRecord) => characterImageRecord.where(
+                                                                            'imageCount',
+                                                                            isEqualTo:
+                                                                                listViewChatMessagesRecord.imageNumber),
+                                                                        singleRecord:
+                                                                            true,
                                                                       ),
+                                                                      builder:
+                                                                          (context,
+                                                                              snapshot) {
+                                                                        // Customize what your widget looks like when it's loading.
+                                                                        if (!snapshot
+                                                                            .hasData) {
+                                                                          return Center(
+                                                                            child:
+                                                                                SizedBox(
+                                                                              width: 50.0,
+                                                                              height: 50.0,
+                                                                              child: CircularProgressIndicator(
+                                                                                valueColor: AlwaysStoppedAnimation<Color>(
+                                                                                  FlutterFlowTheme.of(context).primary,
+                                                                                ),
+                                                                              ),
+                                                                            ),
+                                                                          );
+                                                                        }
+                                                                        List<CharacterImageRecord>
+                                                                            containerCharacterImageRecordList =
+                                                                            snapshot.data!;
+                                                                        // Return an empty Container when the item does not exist.
+                                                                        if (snapshot
+                                                                            .data!
+                                                                            .isEmpty) {
+                                                                          return Container();
+                                                                        }
+                                                                        final containerCharacterImageRecord = containerCharacterImageRecordList.isNotEmpty
+                                                                            ? containerCharacterImageRecordList.first
+                                                                            : null;
+                                                                        return Container(
+                                                                          width:
+                                                                              215.0,
+                                                                          height:
+                                                                              150.0,
+                                                                          decoration:
+                                                                              BoxDecoration(
+                                                                            color:
+                                                                                FlutterFlowTheme.of(context).secondaryBackground,
+                                                                            image:
+                                                                                DecorationImage(
+                                                                              fit: BoxFit.cover,
+                                                                              image: Image.network(
+                                                                                containerCharacterImageRecord!.chatImage,
+                                                                              ).image,
+                                                                            ),
+                                                                            borderRadius:
+                                                                                BorderRadius.only(
+                                                                              bottomLeft: Radius.circular(24.0),
+                                                                              bottomRight: Radius.circular(24.0),
+                                                                              topLeft: Radius.circular(3.0),
+                                                                              topRight: Radius.circular(24.0),
+                                                                            ),
+                                                                          ),
+                                                                        );
+                                                                      },
                                                                     ),
                                                                   ),
                                                               ],
@@ -671,6 +996,12 @@ class _Chatapge2WidgetState extends State<Chatapge2Widget>
                             ],
                           ),
                         ),
+                        if (chatapge2ChatsRecord.userMessageCount == 0)
+                          wrapWithModel(
+                            model: _model.collectPhotoModel,
+                            updateCallback: () => setState(() {}),
+                            child: CollectPhotoWidget(),
+                          ),
                         Column(
                           mainAxisSize: MainAxisSize.max,
                           children: [
@@ -712,8 +1043,21 @@ class _Chatapge2WidgetState extends State<Chatapge2Widget>
                                           color: Color(0xFF57636C),
                                           size: 24.0,
                                         ),
-                                        onPressed: () {
-                                          print('IconButton pressed ...');
+                                        onPressed: () async {
+                                          logFirebaseEvent(
+                                              'CHATAPGE2_PAGE_add_ICN_ON_TAP');
+                                          logFirebaseEvent(
+                                              'IconButton_navigate_to');
+
+                                          context.pushNamed(
+                                            'photoUpload',
+                                            queryParameters: {
+                                              'character': serializeParam(
+                                                widget.character,
+                                                ParamType.DocumentReference,
+                                              ),
+                                            }.withoutNulls,
+                                          );
                                         },
                                       ),
                                     ),
@@ -813,7 +1157,7 @@ class _Chatapge2WidgetState extends State<Chatapge2Widget>
                                     ),
                                     SingleChildScrollView(
                                       scrollDirection: Axis.horizontal,
-                                      controller: _model.rowController,
+                                      controller: _model.rowController2,
                                       child: Row(
                                         mainAxisSize: MainAxisSize.max,
                                         children: [
@@ -950,6 +1294,9 @@ class _Chatapge2WidgetState extends State<Chatapge2Widget>
                                                           r'''$.result.outputText''',
                                                         ).toString()}',
                                                         image: '',
+                                                        loveNumber: random_data
+                                                            .randomDouble(
+                                                                0.01, 0.1),
                                                       ),
                                                       'timestamp': FieldValue
                                                           .serverTimestamp(),
@@ -976,10 +1323,44 @@ class _Chatapge2WidgetState extends State<Chatapge2Widget>
                                                           r'''$.result.outputText''',
                                                         ).toString()}',
                                                         image: '',
+                                                        loveNumber: random_data
+                                                            .randomDouble(
+                                                                0.01, 0.1),
                                                       ),
                                                       'timestamp':
                                                           DateTime.now(),
                                                     }, chatMessagesRecordReference2);
+                                                    if (functions
+                                                            .floor(
+                                                                chatapge2ChatsRecord
+                                                                    .loveNumber)
+                                                            .toString() !=
+                                                        (((_model.createAIMessage!
+                                                                            .loveNumber *
+                                                                        10 +
+                                                                    chatapge2ChatsRecord
+                                                                            .loveNumber *
+                                                                        10)
+                                                                .floor()))
+                                                            .toString()) {
+                                                      logFirebaseEvent(
+                                                          'IconButton_backend_call');
+
+                                                      await _model
+                                                          .createAIMessage!
+                                                          .reference
+                                                          .update(
+                                                              createChatMessagesRecordData(
+                                                        imageNumber: ((_model
+                                                                        .createAIMessage!
+                                                                        .loveNumber *
+                                                                    10 +
+                                                                chatapge2ChatsRecord
+                                                                        .loveNumber *
+                                                                    10)
+                                                            .floor()),
+                                                      ));
+                                                    }
                                                     // updateChat
                                                     logFirebaseEvent(
                                                         'IconButton_updateChat');
@@ -996,12 +1377,13 @@ class _Chatapge2WidgetState extends State<Chatapge2Widget>
                                                       'last_message_time':
                                                           FieldValue
                                                               .serverTimestamp(),
-                                                      'love_number':
+                                                      'love_number': FieldValue
+                                                          .increment(_model
+                                                              .createAIMessage!
+                                                              .loveNumber),
+                                                      'user_message_count':
                                                           FieldValue.increment(
-                                                              random_data
-                                                                  .randomDouble(
-                                                                      0.01,
-                                                                      0.1)),
+                                                              1),
                                                     });
                                                   } else {
                                                     logFirebaseEvent(

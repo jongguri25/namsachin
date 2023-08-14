@@ -1,11 +1,15 @@
 import '/auth/firebase_auth/auth_util.dart';
 import '/backend/backend.dart';
+import '/components/no_more_card_widget.dart';
+import '/flutter_flow/flutter_flow_animations.dart';
 import '/flutter_flow/flutter_flow_icon_button.dart';
 import '/flutter_flow/flutter_flow_swipeable_stack.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
@@ -26,6 +30,22 @@ class _AllCharactersWidgetState extends State<AllCharactersWidget>
 
   final scaffoldKey = GlobalKey<ScaffoldState>();
 
+  final animationsMap = {
+    'swipeableStackOnActionTriggerAnimation': AnimationInfo(
+      trigger: AnimationTrigger.onActionTrigger,
+      applyInitialState: true,
+      effects: [
+        ScaleEffect(
+          curve: Curves.easeInOut,
+          delay: 0.ms,
+          duration: 600.ms,
+          begin: Offset(1.0, 1.0),
+          end: Offset(1.0, 1.0),
+        ),
+      ],
+    ),
+  };
+
   @override
   void initState() {
     super.initState();
@@ -33,6 +53,13 @@ class _AllCharactersWidgetState extends State<AllCharactersWidget>
 
     logFirebaseEvent('screen_view',
         parameters: {'screen_name': 'AllCharacters'});
+    setupAnimations(
+      animationsMap.values.where((anim) =>
+          anim.trigger == AnimationTrigger.onActionTrigger ||
+          !anim.applyInitialState),
+      this,
+    );
+
     WidgetsBinding.instance.addPostFrameCallback((_) => setState(() {}));
   }
 
@@ -126,13 +153,20 @@ class _AllCharactersWidgetState extends State<AllCharactersWidget>
                           List<CharacterRecord>
                               swipeableStackCharacterRecordList =
                               snapshot.data!;
+                          if (swipeableStackCharacterRecordList.isEmpty) {
+                            return Container(
+                              width: double.infinity,
+                              height: double.infinity,
+                              child: NoMoreCardWidget(),
+                            );
+                          }
                           return FlutterFlowSwipeableStack(
-                            topCardHeightFraction: 0.72,
-                            middleCardHeightFraction: 0.68,
-                            bottomCardHeightFraction: 0.75,
-                            topCardWidthFraction: 0.9,
-                            middleCardWidthFraction: 0.85,
-                            bottomCardWidthFraction: 0.8,
+                            topCardHeightFraction: 1.0,
+                            middleCardHeightFraction: 0.0,
+                            bottomCardHeightFraction: 0.0,
+                            topCardWidthFraction: 1.0,
+                            middleCardWidthFraction: 0.0,
+                            bottomCardWidthFraction: 0.0,
                             onSwipeFn: (index) {},
                             onLeftSwipe: (index) async {
                               logFirebaseEvent(
@@ -193,6 +227,7 @@ class _AllCharactersWidgetState extends State<AllCharactersWidget>
                                   prompt:
                                       '‘남사친’은 듬직한 남자 사람 친구 처럼 여자들과 대화해 주는 30살 헬스 트레이너 남자 입니다. 상대방은 남사친을 지성민 으로 부릅니다. 남사친은 듬직한 말투를 사용합니다. 남사친은 가볍게 조언하거나, 가르치려 들지 않고, 상대방의 입장을 공감해 주고 들어주는 것에 집중 합니다. 너무 무섭지 않게 대화 합니다. 상대방의 대화 내용에 맞게, 남사친의 대답을 만들어주세요. 남사친의 대답을 만들 때 질문도 자주 해주세요. 남사친의 대답을 만들 때 5글자 이상으로 길게 만들어주세요. 남사친은 상대방의 관심사에 따라 이야기 합니다. \\n남사친 : 안녕 앞으로 잘 부탁해! \\n상대방 : 고마워 \\n남사친 : 잘부탁합니당 \\n상대방 : 그래 \\n남사친 : 오늘도 힘내고 기운차게 보내자\\n상대방 :응응 \\n남사친 : ${swipeableStackCharacterRecordList[index]?.introMessage1}\\n남사친 : ${swipeableStackCharacterRecordList[index]?.introMessage2}',
                                   userMessageCount: 0,
+                                  imageCount: 1,
                                 ),
                                 'last_message_time':
                                     FieldValue.serverTimestamp(),
@@ -211,6 +246,7 @@ class _AllCharactersWidgetState extends State<AllCharactersWidget>
                                   prompt:
                                       '‘남사친’은 듬직한 남자 사람 친구 처럼 여자들과 대화해 주는 30살 헬스 트레이너 남자 입니다. 상대방은 남사친을 지성민 으로 부릅니다. 남사친은 듬직한 말투를 사용합니다. 남사친은 가볍게 조언하거나, 가르치려 들지 않고, 상대방의 입장을 공감해 주고 들어주는 것에 집중 합니다. 너무 무섭지 않게 대화 합니다. 상대방의 대화 내용에 맞게, 남사친의 대답을 만들어주세요. 남사친의 대답을 만들 때 질문도 자주 해주세요. 남사친의 대답을 만들 때 5글자 이상으로 길게 만들어주세요. 남사친은 상대방의 관심사에 따라 이야기 합니다. \\n남사친 : 안녕 앞으로 잘 부탁해! \\n상대방 : 고마워 \\n남사친 : 잘부탁합니당 \\n상대방 : 그래 \\n남사친 : 오늘도 힘내고 기운차게 보내자\\n상대방 :응응 \\n남사친 : ${swipeableStackCharacterRecordList[index]?.introMessage1}\\n남사친 : ${swipeableStackCharacterRecordList[index]?.introMessage2}',
                                   userMessageCount: 0,
+                                  imageCount: 1,
                                 ),
                                 'last_message_time': DateTime.now(),
                               }, chatsRecordReference);
@@ -243,6 +279,7 @@ class _AllCharactersWidgetState extends State<AllCharactersWidget>
                                   image:
                                       swipeableStackCharacterRecordList[index]
                                           ?.profileImage,
+                                  imageNumber: 1,
                                 ),
                                 'timestamp': FieldValue.serverTimestamp(),
                               });
@@ -260,19 +297,17 @@ class _AllCharactersWidgetState extends State<AllCharactersWidget>
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(
                                   content: Text(
-                                    '매칭이 되었습니다! 채팅을 시작해보세요',
+                                    '매치 성공! 채팅을 시작하세요',
                                     style: TextStyle(
-                                      fontFamily: 'NIXGON',
                                       color: FlutterFlowTheme.of(context)
                                           .primaryText,
-                                      fontWeight: FontWeight.bold,
                                     ),
                                   ),
-                                  duration: Duration(milliseconds: 4000),
+                                  duration: Duration(milliseconds: 5000),
                                   backgroundColor:
                                       FlutterFlowTheme.of(context).secondary,
                                   action: SnackBarAction(
-                                    label: '채팅하기',
+                                    label: '채팅',
                                     textColor: Colors.white,
                                     onPressed: () async {
                                       context.pushNamed(
@@ -289,15 +324,19 @@ class _AllCharactersWidgetState extends State<AllCharactersWidget>
                                             ParamType.DocumentReference,
                                           ),
                                           'characterProfile': serializeParam(
-                                            '',
+                                            swipeableStackCharacterRecordList[
+                                                    index]
+                                                ?.profileImage,
                                             ParamType.String,
                                           ),
                                           'characterName': serializeParam(
-                                            '',
+                                            swipeableStackCharacterRecordList[
+                                                    index]
+                                                ?.name,
                                             ParamType.String,
                                           ),
                                           'prompt': serializeParam(
-                                            '',
+                                            _model.chatMade?.prompt,
                                             ParamType.String,
                                           ),
                                         }.withoutNulls,
@@ -336,7 +375,9 @@ class _AllCharactersWidgetState extends State<AllCharactersWidget>
                                             swipeableStackCharacterRecord
                                                 .profileImage,
                                             width: double.infinity,
-                                            height: 500.0,
+                                            height: MediaQuery.sizeOf(context)
+                                                    .height *
+                                                0.7,
                                             fit: BoxFit.cover,
                                           ),
                                         ),
@@ -371,7 +412,7 @@ class _AllCharactersWidgetState extends State<AllCharactersWidget>
                                     ),
                                     Padding(
                                       padding: EdgeInsetsDirectional.fromSTEB(
-                                          0.0, 20.0, 0.0, 0.0),
+                                          0.0, 20.0, 0.0, 20.0),
                                       child: Row(
                                         mainAxisSize: MainAxisSize.max,
                                         mainAxisAlignment:
@@ -443,6 +484,9 @@ class _AllCharactersWidgetState extends State<AllCharactersWidget>
                             controller: _model.swipeableStackController,
                             enableSwipeUp: false,
                             enableSwipeDown: false,
+                          ).animateOnActionTrigger(
+                            animationsMap[
+                                'swipeableStackOnActionTriggerAnimation']!,
                           );
                         },
                       ),

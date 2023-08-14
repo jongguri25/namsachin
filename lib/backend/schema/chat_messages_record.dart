@@ -51,6 +51,16 @@ class ChatMessagesRecord extends FirestoreRecord {
   String get nextPrompt => _nextPrompt ?? '';
   bool hasNextPrompt() => _nextPrompt != null;
 
+  // "loveNumber" field.
+  double? _loveNumber;
+  double get loveNumber => _loveNumber ?? 0.0;
+  bool hasLoveNumber() => _loveNumber != null;
+
+  // "imageNumber" field.
+  int? _imageNumber;
+  int get imageNumber => _imageNumber ?? 0;
+  bool hasImageNumber() => _imageNumber != null;
+
   void _initializeFields() {
     _user = snapshotData['user'] as DocumentReference?;
     _chat = snapshotData['chat'] as DocumentReference?;
@@ -59,6 +69,8 @@ class ChatMessagesRecord extends FirestoreRecord {
     _timestamp = snapshotData['timestamp'] as DateTime?;
     _ai = snapshotData['AI'] as bool?;
     _nextPrompt = snapshotData['nextPrompt'] as String?;
+    _loveNumber = castToType<double>(snapshotData['loveNumber']);
+    _imageNumber = castToType<int>(snapshotData['imageNumber']);
   }
 
   static CollectionReference get collection =>
@@ -103,6 +115,8 @@ Map<String, dynamic> createChatMessagesRecordData({
   DateTime? timestamp,
   bool? ai,
   String? nextPrompt,
+  double? loveNumber,
+  int? imageNumber,
 }) {
   final firestoreData = mapToFirestore(
     <String, dynamic>{
@@ -113,6 +127,8 @@ Map<String, dynamic> createChatMessagesRecordData({
       'timestamp': timestamp,
       'AI': ai,
       'nextPrompt': nextPrompt,
+      'loveNumber': loveNumber,
+      'imageNumber': imageNumber,
     }.withoutNulls,
   );
 
@@ -131,7 +147,9 @@ class ChatMessagesRecordDocumentEquality
         e1?.image == e2?.image &&
         e1?.timestamp == e2?.timestamp &&
         e1?.ai == e2?.ai &&
-        e1?.nextPrompt == e2?.nextPrompt;
+        e1?.nextPrompt == e2?.nextPrompt &&
+        e1?.loveNumber == e2?.loveNumber &&
+        e1?.imageNumber == e2?.imageNumber;
   }
 
   @override
@@ -142,7 +160,9 @@ class ChatMessagesRecordDocumentEquality
         e?.image,
         e?.timestamp,
         e?.ai,
-        e?.nextPrompt
+        e?.nextPrompt,
+        e?.loveNumber,
+        e?.imageNumber
       ]);
 
   @override
