@@ -309,8 +309,8 @@ class _Chatapge2WidgetState extends State<Chatapge2Widget>
                             Padding(
                               padding: EdgeInsetsDirectional.fromSTEB(
                                   20.0, 0.0, 0.0, 10.0),
-                              child: FutureBuilder<List<CharacterImageRecord>>(
-                                future: queryCharacterImageRecordOnce(
+                              child: StreamBuilder<List<CharacterImageRecord>>(
+                                stream: queryCharacterImageRecord(
                                   parent: widget.character,
                                   queryBuilder: (characterImageRecord) =>
                                       characterImageRecord
@@ -603,22 +603,70 @@ class _Chatapge2WidgetState extends State<Chatapge2Widget>
                                                               CrossAxisAlignment
                                                                   .start,
                                                           children: [
-                                                            Container(
-                                                              width: 45.0,
-                                                              height: 45.0,
-                                                              clipBehavior: Clip
-                                                                  .antiAlias,
-                                                              decoration:
-                                                                  BoxDecoration(
-                                                                shape: BoxShape
-                                                                    .circle,
-                                                              ),
-                                                              child:
-                                                                  Image.network(
-                                                                widget
+                                                            InkWell(
+                                                              splashColor: Colors
+                                                                  .transparent,
+                                                              focusColor: Colors
+                                                                  .transparent,
+                                                              hoverColor: Colors
+                                                                  .transparent,
+                                                              highlightColor:
+                                                                  Colors
+                                                                      .transparent,
+                                                              onTap: () async {
+                                                                logFirebaseEvent(
+                                                                    'CHATAPGE2_CircleImage_f2kw56yi_ON_TAP');
+                                                                logFirebaseEvent(
+                                                                    'CircleImage_expand_image');
+                                                                await Navigator
+                                                                    .push(
+                                                                  context,
+                                                                  PageTransition(
+                                                                    type: PageTransitionType
+                                                                        .fade,
+                                                                    child:
+                                                                        FlutterFlowExpandedImageView(
+                                                                      image: Image
+                                                                          .network(
+                                                                        widget
+                                                                            .characterProfile!,
+                                                                        fit: BoxFit
+                                                                            .contain,
+                                                                      ),
+                                                                      allowRotation:
+                                                                          false,
+                                                                      tag: widget
+                                                                          .characterProfile!,
+                                                                      useHeroAnimation:
+                                                                          true,
+                                                                    ),
+                                                                  ),
+                                                                );
+                                                              },
+                                                              child: Hero(
+                                                                tag: widget
                                                                     .characterProfile!,
-                                                                fit: BoxFit
-                                                                    .cover,
+                                                                transitionOnUserGestures:
+                                                                    true,
+                                                                child:
+                                                                    Container(
+                                                                  width: 45.0,
+                                                                  height: 45.0,
+                                                                  clipBehavior:
+                                                                      Clip.antiAlias,
+                                                                  decoration:
+                                                                      BoxDecoration(
+                                                                    shape: BoxShape
+                                                                        .circle,
+                                                                  ),
+                                                                  child: Image
+                                                                      .network(
+                                                                    widget
+                                                                        .characterProfile!,
+                                                                    fit: BoxFit
+                                                                        .cover,
+                                                                  ),
+                                                                ),
                                                               ),
                                                             ),
                                                             Column(
@@ -1315,6 +1363,14 @@ class _Chatapge2WidgetState extends State<Chatapge2Widget>
                                                           DateTime.now(),
                                                     }, chatMessagesRecordReference1);
                                                     logFirebaseEvent(
+                                                        'IconButton_backend_call');
+                                                    _model.apiResult94f =
+                                                        await ClovaCall.call(
+                                                      text: _model
+                                                          .createUserMessage
+                                                          ?.nextPrompt,
+                                                    );
+                                                    logFirebaseEvent(
                                                         'IconButton_scroll_to');
                                                     await _model
                                                         .listViewController
@@ -1346,14 +1402,6 @@ class _Chatapge2WidgetState extends State<Chatapge2Widget>
                                                       _model.fullNameController
                                                           ?.clear();
                                                     });
-                                                    logFirebaseEvent(
-                                                        'IconButton_backend_call');
-                                                    _model.apiResult94f =
-                                                        await ClovaCall.call(
-                                                      text: _model
-                                                          .createUserMessage
-                                                          ?.nextPrompt,
-                                                    );
                                                     if ((_model.apiResult94f
                                                             ?.succeeded ??
                                                         true)) {
@@ -1406,6 +1454,7 @@ class _Chatapge2WidgetState extends State<Chatapge2Widget>
                                                                   .randomDouble(
                                                                       0.005,
                                                                       0.01)),
+                                                          imageNumber: 0,
                                                         ),
                                                         'timestamp': FieldValue
                                                             .serverTimestamp(),
@@ -1452,10 +1501,17 @@ class _Chatapge2WidgetState extends State<Chatapge2Widget>
                                                                   .randomDouble(
                                                                       0.005,
                                                                       0.01)),
+                                                          imageNumber: 0,
                                                         ),
                                                         'timestamp':
                                                             DateTime.now(),
                                                       }, chatMessagesRecordReference2);
+                                                      logFirebaseEvent(
+                                                          'IconButton_wait__delay');
+                                                      await Future.delayed(
+                                                          const Duration(
+                                                              milliseconds:
+                                                                  2000));
                                                       if (functions
                                                               .floor(
                                                                   chatapge2ChatsRecord

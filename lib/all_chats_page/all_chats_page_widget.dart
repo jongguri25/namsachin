@@ -472,11 +472,11 @@ class _AllChatsPageWidgetState extends State<AllChatsPageWidget> {
                                                   padding: EdgeInsetsDirectional
                                                       .fromSTEB(
                                                           5.0, 5.0, 0.0, 0.0),
-                                                  child: FutureBuilder<
+                                                  child: StreamBuilder<
                                                       List<
                                                           CharacterImageRecord>>(
-                                                    future:
-                                                        queryCharacterImageRecordOnce(
+                                                    stream:
+                                                        queryCharacterImageRecord(
                                                       parent:
                                                           containerCharacterRecord
                                                               .reference,
@@ -537,50 +537,86 @@ class _AllChatsPageWidgetState extends State<AllChatsPageWidget> {
                                                                         1.0,
                                                                         1.0),
                                                                 children: [
-                                                                  ClipRRect(
-                                                                    borderRadius:
-                                                                        BorderRadius.circular(
-                                                                            8.0),
-                                                                    child: Image
-                                                                        .network(
-                                                                      rowCharacterImageRecord.imageCount <=
-                                                                              (listViewChatsRecord.loveNumber *
-                                                                                  10)
-                                                                          ? rowCharacterImageRecord
-                                                                              .chatImage
-                                                                          : 'https://i.ibb.co/r7Bct8L/Frame-21.png',
-                                                                      width:
-                                                                          40.0,
-                                                                      height:
-                                                                          60.0,
-                                                                      fit: BoxFit
-                                                                          .cover,
+                                                                  Container(
+                                                                    width: 30.0,
+                                                                    height: 6.0,
+                                                                    decoration:
+                                                                        BoxDecoration(
+                                                                      color: valueOrDefault<
+                                                                          Color>(
+                                                                        rowCharacterImageRecord.imageCount <=
+                                                                                (listViewChatsRecord.loveNumber * 10)
+                                                                            ? Color(0xFFFDE500)
+                                                                            : Color(0xFFCECECE),
+                                                                        Color(
+                                                                            0xFFCECECE),
+                                                                      ),
+                                                                      borderRadius:
+                                                                          BorderRadius.circular(
+                                                                              4.0),
                                                                     ),
                                                                   ),
-                                                                  Padding(
-                                                                    padding: EdgeInsetsDirectional
-                                                                        .fromSTEB(
-                                                                            4.0,
-                                                                            4.0,
-                                                                            4.0,
-                                                                            4.0),
-                                                                    child: Text(
-                                                                      '${rowCharacterImageRecord.imageCount.toString()}/10',
-                                                                      style: FlutterFlowTheme.of(
-                                                                              context)
-                                                                          .bodyMedium
-                                                                          .override(
-                                                                            fontFamily:
-                                                                                'Open Sans',
-                                                                            color:
-                                                                                Colors.white,
-                                                                            fontSize:
-                                                                                10.0,
-                                                                            fontWeight:
-                                                                                FontWeight.w500,
-                                                                          ),
+                                                                  if (responsiveVisibility(
+                                                                    context:
+                                                                        context,
+                                                                    phone:
+                                                                        false,
+                                                                    tablet:
+                                                                        false,
+                                                                    tabletLandscape:
+                                                                        false,
+                                                                    desktop:
+                                                                        false,
+                                                                  ))
+                                                                    ClipRRect(
+                                                                      borderRadius:
+                                                                          BorderRadius.circular(
+                                                                              8.0),
+                                                                      child: Image
+                                                                          .network(
+                                                                        rowCharacterImageRecord.imageCount <=
+                                                                                (listViewChatsRecord.loveNumber * 10)
+                                                                            ? rowCharacterImageRecord.chatImage
+                                                                            : 'https://i.ibb.co/r7Bct8L/Frame-21.png',
+                                                                        width:
+                                                                            40.0,
+                                                                        height:
+                                                                            10.0,
+                                                                        fit: BoxFit
+                                                                            .cover,
+                                                                      ),
                                                                     ),
-                                                                  ),
+                                                                  if (responsiveVisibility(
+                                                                    context:
+                                                                        context,
+                                                                    phone:
+                                                                        false,
+                                                                    tablet:
+                                                                        false,
+                                                                    tabletLandscape:
+                                                                        false,
+                                                                    desktop:
+                                                                        false,
+                                                                  ))
+                                                                    Padding(
+                                                                      padding: EdgeInsetsDirectional.fromSTEB(
+                                                                          4.0,
+                                                                          4.0,
+                                                                          4.0,
+                                                                          4.0),
+                                                                      child:
+                                                                          Text(
+                                                                        '${rowCharacterImageRecord.imageCount.toString()}',
+                                                                        style: FlutterFlowTheme.of(context)
+                                                                            .bodyMedium
+                                                                            .override(
+                                                                              fontFamily: 'Open Sans',
+                                                                              color: Colors.white,
+                                                                              fontSize: 10.0,
+                                                                              fontWeight: FontWeight.w500,
+                                                                            ),
+                                                                      ),
+                                                                    ),
                                                                 ],
                                                               ),
                                                             );
