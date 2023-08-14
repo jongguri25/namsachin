@@ -6,7 +6,8 @@ import 'package:page_transition/page_transition.dart';
 import '/backend/backend.dart';
 
 import '../../auth/base_auth_user_provider.dart';
-
+import '../../backend/push_notifications/push_notifications_handler.dart'
+    show PushNotificationsHandler;
 import '/index.dart';
 import '/main.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
@@ -127,15 +128,19 @@ GoRouter createRouter(AppStateNotifier appStateNotifier) => GoRouter(
         FFRoute(
           name: 'chatapge2',
           path: '/chatapge2',
+          asyncParams: {
+            'chat': getDoc(['chats'], ChatsRecord.fromSnapshot),
+          },
           builder: (context, params) => Chatapge2Widget(
             character: params.getParam(
                 'character', ParamType.DocumentReference, false, ['character']),
-            chat: params.getParam(
-                'chat', ParamType.DocumentReference, false, ['chats']),
+            chatReference: params.getParam(
+                'chatReference', ParamType.DocumentReference, false, ['chats']),
             characterProfile:
                 params.getParam('characterProfile', ParamType.String),
             characterName: params.getParam('characterName', ParamType.String),
             prompt: params.getParam('prompt', ParamType.String),
+            chat: params.getParam('chat', ParamType.Document),
           ),
         ),
         FFRoute(
@@ -345,7 +350,7 @@ class FFRoute {
                     ),
                   ),
                 )
-              : page;
+              : PushNotificationsHandler(child: page);
 
           final transitionInfo = state.transitionInfo;
           return transitionInfo.hasTransition

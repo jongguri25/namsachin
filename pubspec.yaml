@@ -30,6 +30,9 @@ dependencies:
   cloud_firestore: 4.8.0
   cloud_firestore_platform_interface: 5.15.0
   cloud_firestore_web: 3.6.0
+  cloud_functions: 4.3.2
+  cloud_functions_platform_interface: 5.4.2
+  cloud_functions_web: 4.5.2
   dash_chat: 
     git:
       url: https://github.com/FlutterFlow/flutterflow_dash_chat.git
@@ -48,6 +51,9 @@ dependencies:
   firebase_core_web: 2.5.0
   firebase_crashlytics: 3.3.2
   firebase_crashlytics_platform_interface: 3.6.2
+  firebase_messaging: 14.6.2
+  firebase_messaging_platform_interface: 4.5.2
+  firebase_messaging_web: 3.5.2
   firebase_storage: 11.2.2
   firebase_storage_platform_interface: 4.4.2
   firebase_storage_web: 3.6.2
@@ -92,7 +98,6 @@ dependencies:
   sign_in_with_apple_web: 1.0.1
   smooth_page_indicator: 1.0.1
   sqflite: 2.2.6
-  stop_watch_timer: 1.5.0
   stream_transform: 2.1.0
   swipeable_card_stack: 0.0.5
   timeago: 3.2.2

@@ -23,17 +23,19 @@ class Chatapge2Widget extends StatefulWidget {
   const Chatapge2Widget({
     Key? key,
     required this.character,
-    required this.chat,
+    required this.chatReference,
     required this.characterProfile,
     required this.characterName,
     required this.prompt,
+    required this.chat,
   }) : super(key: key);
 
   final DocumentReference? character;
-  final DocumentReference? chat;
+  final DocumentReference? chatReference;
   final String? characterProfile;
   final String? characterName;
   final String? prompt;
+  final ChatsRecord? chat;
 
   @override
   _Chatapge2WidgetState createState() => _Chatapge2WidgetState();
@@ -66,6 +68,25 @@ class _Chatapge2WidgetState extends State<Chatapge2Widget>
         duration: Duration(milliseconds: 1),
         curve: Curves.ease,
       );
+      if (widget.chat?.userMessageCount == 0) {
+        logFirebaseEvent('chatapge2_bottom_sheet');
+        await showModalBottomSheet(
+          isScrollControlled: true,
+          backgroundColor: Colors.transparent,
+          enableDrag: false,
+          context: context,
+          builder: (context) {
+            return GestureDetector(
+              onTap: () =>
+                  FocusScope.of(context).requestFocus(_model.unfocusNode),
+              child: Padding(
+                padding: MediaQuery.viewInsetsOf(context),
+                child: CollectPhotoWidget(),
+              ),
+            );
+          },
+        ).then((value) => setState(() {}));
+      }
     });
 
     _model.fullNameController ??= TextEditingController();
@@ -84,7 +105,7 @@ class _Chatapge2WidgetState extends State<Chatapge2Widget>
     context.watch<FFAppState>();
     final lottieAnimationController = AnimationController(vsync: this);
     return FutureBuilder<ChatsRecord>(
-      future: ChatsRecord.getDocumentOnce(widget.chat!),
+      future: ChatsRecord.getDocumentOnce(widget.chatReference!),
       builder: (context, snapshot) {
         // Customize what your widget looks like when it's loading.
         if (!snapshot.hasData) {
@@ -419,7 +440,7 @@ class _Chatapge2WidgetState extends State<Chatapge2Widget>
                                                                     0xFFEB0021),
                                                                 fontWeight:
                                                                     FontWeight
-                                                                        .bold,
+                                                                        .w800,
                                                                 useGoogleFonts:
                                                                     false,
                                                               ),
@@ -492,8 +513,8 @@ class _Chatapge2WidgetState extends State<Chatapge2Widget>
                                                 (chatMessagesRecord) =>
                                                     chatMessagesRecord
                                                         .where('chat',
-                                                            isEqualTo:
-                                                                widget.chat)
+                                                            isEqualTo: widget
+                                                                .chatReference)
                                                         .orderBy('timestamp'),
                                           ),
                                           builder: (context, snapshot) {
@@ -996,12 +1017,6 @@ class _Chatapge2WidgetState extends State<Chatapge2Widget>
                             ],
                           ),
                         ),
-                        if (chatapge2ChatsRecord.userMessageCount == 0)
-                          wrapWithModel(
-                            model: _model.collectPhotoModel,
-                            updateCallback: () => setState(() {}),
-                            child: CollectPhotoWidget(),
-                          ),
                         Column(
                           mainAxisSize: MainAxisSize.max,
                           children: [
@@ -1026,431 +1041,519 @@ class _Chatapge2WidgetState extends State<Chatapge2Widget>
                                     )
                                   ],
                                 ),
-                                child: Row(
-                                  mainAxisSize: MainAxisSize.max,
-                                  crossAxisAlignment: CrossAxisAlignment.end,
-                                  children: [
-                                    Padding(
-                                      padding: EdgeInsetsDirectional.fromSTEB(
-                                          8.0, 8.0, 0.0, 8.0),
-                                      child: FlutterFlowIconButton(
-                                        borderColor: Colors.transparent,
-                                        borderRadius: 8.0,
-                                        borderWidth: 1.0,
-                                        buttonSize: 44.0,
-                                        icon: Icon(
-                                          Icons.add,
-                                          color: Color(0xFF57636C),
-                                          size: 24.0,
-                                        ),
-                                        onPressed: () async {
-                                          logFirebaseEvent(
-                                              'CHATAPGE2_PAGE_add_ICN_ON_TAP');
-                                          logFirebaseEvent(
-                                              'IconButton_navigate_to');
+                                child: InkWell(
+                                  splashColor: Colors.transparent,
+                                  focusColor: Colors.transparent,
+                                  hoverColor: Colors.transparent,
+                                  highlightColor: Colors.transparent,
+                                  onTap: () async {
+                                    logFirebaseEvent(
+                                        'CHATAPGE2_PAGE_Row_21zidakh_ON_TAP');
+                                    logFirebaseEvent('Row_scroll_to');
+                                    await _model.listViewController?.animateTo(
+                                      _model.listViewController!.position
+                                          .maxScrollExtent,
+                                      duration: Duration(milliseconds: 1),
+                                      curve: Curves.ease,
+                                    );
+                                    logFirebaseEvent('Row_scroll_to');
+                                    await _model.columnController?.animateTo(
+                                      _model.columnController!.position
+                                          .maxScrollExtent,
+                                      duration: Duration(milliseconds: 1),
+                                      curve: Curves.ease,
+                                    );
+                                  },
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.max,
+                                    crossAxisAlignment: CrossAxisAlignment.end,
+                                    children: [
+                                      Padding(
+                                        padding: EdgeInsetsDirectional.fromSTEB(
+                                            8.0, 8.0, 0.0, 8.0),
+                                        child: InkWell(
+                                          splashColor: Colors.transparent,
+                                          focusColor: Colors.transparent,
+                                          hoverColor: Colors.transparent,
+                                          highlightColor: Colors.transparent,
+                                          onLongPress: () async {
+                                            logFirebaseEvent(
+                                                'CHATAPGE2_PAGE_add_ICN_ON_LONG_PRESS');
+                                            logFirebaseEvent(
+                                                'IconButton_navigate_to');
 
-                                          context.pushNamed(
-                                            'photoUpload',
-                                            queryParameters: {
-                                              'character': serializeParam(
-                                                widget.character,
-                                                ParamType.DocumentReference,
-                                              ),
-                                            }.withoutNulls,
-                                          );
-                                        },
-                                      ),
-                                    ),
-                                    Expanded(
-                                      child: Container(
-                                        decoration: BoxDecoration(
-                                          color: FlutterFlowTheme.of(context)
-                                              .secondaryBackground,
-                                        ),
-                                        child: Padding(
-                                          padding:
-                                              EdgeInsetsDirectional.fromSTEB(
-                                                  5.0, 5.0, 8.0, 5.0),
-                                          child: TextFormField(
-                                            controller:
-                                                _model.fullNameController,
-                                            obscureText: false,
-                                            decoration: InputDecoration(
-                                              labelStyle: FlutterFlowTheme.of(
-                                                      context)
-                                                  .bodySmall
-                                                  .override(
-                                                    fontFamily: 'NIXGON',
-                                                    color: Color(0xFF57636C),
-                                                    fontSize: 14.0,
-                                                    fontWeight: FontWeight.w500,
-                                                    useGoogleFonts: false,
-                                                  ),
-                                              hintStyle:
-                                                  FlutterFlowTheme.of(context)
-                                                      .bodySmall
-                                                      .override(
-                                                        fontFamily: 'Inter',
-                                                        color:
-                                                            Color(0xFF57636C),
-                                                        fontSize: 14.0,
-                                                        fontWeight:
-                                                            FontWeight.normal,
-                                                      ),
-                                              enabledBorder: OutlineInputBorder(
-                                                borderSide: BorderSide(
-                                                  color: Color(0xFFF8F8F8),
-                                                  width: 1.0,
+                                            context.pushNamed(
+                                              'photoUpload',
+                                              queryParameters: {
+                                                'character': serializeParam(
+                                                  widget.character,
+                                                  ParamType.DocumentReference,
                                                 ),
-                                                borderRadius:
-                                                    BorderRadius.circular(12.0),
-                                              ),
-                                              focusedBorder: OutlineInputBorder(
-                                                borderSide: BorderSide(
-                                                  color: Color(0x00000000),
-                                                  width: 1.0,
-                                                ),
-                                                borderRadius:
-                                                    BorderRadius.circular(12.0),
-                                              ),
-                                              errorBorder: OutlineInputBorder(
-                                                borderSide: BorderSide(
-                                                  color: Color(0x00000000),
-                                                  width: 1.0,
-                                                ),
-                                                borderRadius:
-                                                    BorderRadius.circular(12.0),
-                                              ),
-                                              focusedErrorBorder:
-                                                  OutlineInputBorder(
-                                                borderSide: BorderSide(
-                                                  color: Color(0x00000000),
-                                                  width: 1.0,
-                                                ),
-                                                borderRadius:
-                                                    BorderRadius.circular(12.0),
-                                              ),
-                                              filled: true,
-                                              fillColor: Color(0xFFF8F8F8),
-                                              contentPadding:
-                                                  EdgeInsetsDirectional
-                                                      .fromSTEB(
-                                                          12.0, 8.0, 20.0, 8.0),
+                                              }.withoutNulls,
+                                            );
+                                          },
+                                          child: FlutterFlowIconButton(
+                                            borderColor: Colors.transparent,
+                                            borderRadius: 8.0,
+                                            borderWidth: 1.0,
+                                            buttonSize: 44.0,
+                                            icon: Icon(
+                                              Icons.add,
+                                              color: Color(0xFF57636C),
+                                              size: 24.0,
                                             ),
-                                            style: FlutterFlowTheme.of(context)
-                                                .bodyMedium
-                                                .override(
-                                                  fontFamily: 'NIXGON',
-                                                  color: Color(0xFF111417),
-                                                  fontSize: 14.0,
-                                                  fontWeight: FontWeight.normal,
-                                                  useGoogleFonts: false,
-                                                ),
-                                            maxLines: 5,
-                                            minLines: 1,
-                                            validator: _model
-                                                .fullNameControllerValidator
-                                                .asValidator(context),
+                                            onPressed: () {
+                                              print('IconButton pressed ...');
+                                            },
                                           ),
                                         ),
                                       ),
-                                    ),
-                                    SingleChildScrollView(
-                                      scrollDirection: Axis.horizontal,
-                                      controller: _model.rowController2,
-                                      child: Row(
-                                        mainAxisSize: MainAxisSize.max,
-                                        children: [
-                                          Align(
-                                            alignment:
-                                                AlignmentDirectional(0.0, 1.0),
-                                            child: Padding(
-                                              padding: EdgeInsetsDirectional
-                                                  .fromSTEB(8.0, 8.0, 8.0, 8.0),
-                                              child: FlutterFlowIconButton(
-                                                borderColor: Color(0xFFFFE302),
-                                                borderRadius: 30.0,
-                                                borderWidth: 3.0,
-                                                buttonSize: 45.0,
-                                                fillColor: Color(0xFFFFE302),
-                                                icon: Icon(
-                                                  Icons.arrow_upward_sharp,
-                                                  color: Colors.black,
-                                                  size: 30.0,
+                                      Expanded(
+                                        child: Container(
+                                          decoration: BoxDecoration(
+                                            color: FlutterFlowTheme.of(context)
+                                                .secondaryBackground,
+                                          ),
+                                          child: Padding(
+                                            padding:
+                                                EdgeInsetsDirectional.fromSTEB(
+                                                    5.0, 5.0, 8.0, 5.0),
+                                            child: TextFormField(
+                                              controller:
+                                                  _model.fullNameController,
+                                              obscureText: false,
+                                              decoration: InputDecoration(
+                                                labelStyle:
+                                                    FlutterFlowTheme.of(context)
+                                                        .bodySmall
+                                                        .override(
+                                                          fontFamily: 'NIXGON',
+                                                          color:
+                                                              Color(0xFF57636C),
+                                                          fontSize: 14.0,
+                                                          fontWeight:
+                                                              FontWeight.w500,
+                                                          useGoogleFonts: false,
+                                                        ),
+                                                hintStyle:
+                                                    FlutterFlowTheme.of(context)
+                                                        .bodySmall
+                                                        .override(
+                                                          fontFamily: 'Inter',
+                                                          color:
+                                                              Color(0xFF57636C),
+                                                          fontSize: 14.0,
+                                                          fontWeight:
+                                                              FontWeight.normal,
+                                                        ),
+                                                enabledBorder:
+                                                    OutlineInputBorder(
+                                                  borderSide: BorderSide(
+                                                    color: Color(0xFFF8F8F8),
+                                                    width: 1.0,
+                                                  ),
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          12.0),
                                                 ),
-                                                onPressed: () async {
-                                                  logFirebaseEvent(
-                                                      'CHATAPGE2_arrow_upward_sharp_ICN_ON_TAP');
-                                                  // createUserMessage
-                                                  logFirebaseEvent(
-                                                      'IconButton_createUserMessage');
-
-                                                  var chatMessagesRecordReference1 =
-                                                      ChatMessagesRecord
-                                                          .collection
-                                                          .doc();
-                                                  await chatMessagesRecordReference1
-                                                      .set({
-                                                    ...createChatMessagesRecordData(
-                                                      user:
-                                                          currentUserReference,
-                                                      chat: widget.chat,
-                                                      text: _model
-                                                          .fullNameController
-                                                          .text,
-                                                      ai: false,
-                                                      nextPrompt:
-                                                          '${widget.prompt} \\n상대방 : ${_model.fullNameController.text} \\n남사친 :',
-                                                      image: '',
-                                                    ),
-                                                    'timestamp': FieldValue
-                                                        .serverTimestamp(),
-                                                  });
-                                                  _model.createUserMessage =
-                                                      ChatMessagesRecord
-                                                          .getDocumentFromData({
-                                                    ...createChatMessagesRecordData(
-                                                      user:
-                                                          currentUserReference,
-                                                      chat: widget.chat,
-                                                      text: _model
-                                                          .fullNameController
-                                                          .text,
-                                                      ai: false,
-                                                      nextPrompt:
-                                                          '${widget.prompt} \\n상대방 : ${_model.fullNameController.text} \\n남사친 :',
-                                                      image: '',
-                                                    ),
-                                                    'timestamp': DateTime.now(),
-                                                  }, chatMessagesRecordReference1);
-                                                  logFirebaseEvent(
-                                                      'IconButton_scroll_to');
-                                                  await _model
-                                                      .listViewController
-                                                      ?.animateTo(
-                                                    _model
-                                                        .listViewController!
-                                                        .position
-                                                        .maxScrollExtent,
-                                                    duration: Duration(
-                                                        milliseconds: 1),
-                                                    curve: Curves.ease,
-                                                  );
-                                                  logFirebaseEvent(
-                                                      'IconButton_scroll_to');
-                                                  await _model.columnController
-                                                      ?.animateTo(
-                                                    _model
-                                                        .columnController!
-                                                        .position
-                                                        .maxScrollExtent,
-                                                    duration: Duration(
-                                                        milliseconds: 1),
-                                                    curve: Curves.ease,
-                                                  );
-                                                  logFirebaseEvent(
-                                                      'IconButton_clear_text_fields');
-                                                  setState(() {
-                                                    _model.fullNameController
-                                                        ?.clear();
-                                                  });
-                                                  logFirebaseEvent(
-                                                      'IconButton_backend_call');
-                                                  _model.apiResult94f =
-                                                      await ClovaCall.call(
-                                                    text: _model
-                                                        .createUserMessage
-                                                        ?.nextPrompt,
-                                                  );
-                                                  if ((_model.apiResult94f
-                                                          ?.succeeded ??
-                                                      true)) {
-                                                    // createAIMessage
+                                                focusedBorder:
+                                                    OutlineInputBorder(
+                                                  borderSide: BorderSide(
+                                                    color: Color(0x00000000),
+                                                    width: 1.0,
+                                                  ),
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          12.0),
+                                                ),
+                                                errorBorder: OutlineInputBorder(
+                                                  borderSide: BorderSide(
+                                                    color: Color(0x00000000),
+                                                    width: 1.0,
+                                                  ),
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          12.0),
+                                                ),
+                                                focusedErrorBorder:
+                                                    OutlineInputBorder(
+                                                  borderSide: BorderSide(
+                                                    color: Color(0x00000000),
+                                                    width: 1.0,
+                                                  ),
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          12.0),
+                                                ),
+                                                filled: true,
+                                                fillColor: Color(0xFFF8F8F8),
+                                                contentPadding:
+                                                    EdgeInsetsDirectional
+                                                        .fromSTEB(12.0, 8.0,
+                                                            20.0, 8.0),
+                                              ),
+                                              style:
+                                                  FlutterFlowTheme.of(context)
+                                                      .bodyMedium
+                                                      .override(
+                                                        fontFamily: 'NIXGON',
+                                                        color:
+                                                            Color(0xFF111417),
+                                                        fontSize: 14.0,
+                                                        fontWeight:
+                                                            FontWeight.normal,
+                                                        useGoogleFonts: false,
+                                                      ),
+                                              maxLines: 5,
+                                              minLines: 1,
+                                              validator: _model
+                                                  .fullNameControllerValidator
+                                                  .asValidator(context),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                      SingleChildScrollView(
+                                        scrollDirection: Axis.horizontal,
+                                        controller: _model.rowController2,
+                                        child: Row(
+                                          mainAxisSize: MainAxisSize.max,
+                                          children: [
+                                            Align(
+                                              alignment: AlignmentDirectional(
+                                                  0.0, 1.0),
+                                              child: Padding(
+                                                padding: EdgeInsetsDirectional
+                                                    .fromSTEB(
+                                                        8.0, 8.0, 8.0, 8.0),
+                                                child: FlutterFlowIconButton(
+                                                  borderColor:
+                                                      Color(0xFFFFE302),
+                                                  borderRadius: 30.0,
+                                                  borderWidth: 3.0,
+                                                  buttonSize: 45.0,
+                                                  fillColor: Color(0xFFFFE302),
+                                                  icon: Icon(
+                                                    Icons.arrow_upward_sharp,
+                                                    color: Colors.black,
+                                                    size: 30.0,
+                                                  ),
+                                                  onPressed: () async {
                                                     logFirebaseEvent(
-                                                        'IconButton_createAIMessage');
+                                                        'CHATAPGE2_arrow_upward_sharp_ICN_ON_TAP');
+                                                    // createUserMessage
+                                                    logFirebaseEvent(
+                                                        'IconButton_createUserMessage');
 
-                                                    var chatMessagesRecordReference2 =
+                                                    var chatMessagesRecordReference1 =
                                                         ChatMessagesRecord
                                                             .collection
                                                             .doc();
-                                                    await chatMessagesRecordReference2
+                                                    await chatMessagesRecordReference1
                                                         .set({
                                                       ...createChatMessagesRecordData(
                                                         user:
                                                             currentUserReference,
-                                                        chat: widget.chat,
-                                                        text: getJsonField(
-                                                          (_model.apiResult94f
-                                                                  ?.jsonBody ??
-                                                              ''),
-                                                          r'''$.result.outputText''',
-                                                        ).toString(),
-                                                        ai: true,
+                                                        chat: widget
+                                                            .chatReference,
+                                                        text: _model
+                                                            .fullNameController
+                                                            .text,
+                                                        ai: false,
                                                         nextPrompt:
-                                                            '${_model.createUserMessage?.nextPrompt}${getJsonField(
-                                                          (_model.apiResult94f
-                                                                  ?.jsonBody ??
-                                                              ''),
-                                                          r'''$.result.outputText''',
-                                                        ).toString()}',
+                                                            '${widget.prompt} \\n상대방 : ${_model.fullNameController.text} \\n남사친 :',
                                                         image: '',
-                                                        loveNumber: random_data
-                                                            .randomDouble(
-                                                                0.01, 0.1),
                                                       ),
                                                       'timestamp': FieldValue
                                                           .serverTimestamp(),
                                                     });
-                                                    _model.createAIMessage =
+                                                    _model.createUserMessage =
                                                         ChatMessagesRecord
                                                             .getDocumentFromData({
                                                       ...createChatMessagesRecordData(
                                                         user:
                                                             currentUserReference,
-                                                        chat: widget.chat,
-                                                        text: getJsonField(
-                                                          (_model.apiResult94f
-                                                                  ?.jsonBody ??
-                                                              ''),
-                                                          r'''$.result.outputText''',
-                                                        ).toString(),
-                                                        ai: true,
+                                                        chat: widget
+                                                            .chatReference,
+                                                        text: _model
+                                                            .fullNameController
+                                                            .text,
+                                                        ai: false,
                                                         nextPrompt:
-                                                            '${_model.createUserMessage?.nextPrompt}${getJsonField(
-                                                          (_model.apiResult94f
-                                                                  ?.jsonBody ??
-                                                              ''),
-                                                          r'''$.result.outputText''',
-                                                        ).toString()}',
+                                                            '${widget.prompt} \\n상대방 : ${_model.fullNameController.text} \\n남사친 :',
                                                         image: '',
-                                                        loveNumber: random_data
-                                                            .randomDouble(
-                                                                0.01, 0.1),
                                                       ),
                                                       'timestamp':
                                                           DateTime.now(),
-                                                    }, chatMessagesRecordReference2);
-                                                    if (functions
-                                                            .floor(
-                                                                chatapge2ChatsRecord
-                                                                    .loveNumber)
-                                                            .toString() !=
-                                                        (((_model.createAIMessage!
-                                                                            .loveNumber *
-                                                                        10 +
-                                                                    chatapge2ChatsRecord
-                                                                            .loveNumber *
-                                                                        10)
-                                                                .floor()))
-                                                            .toString()) {
-                                                      logFirebaseEvent(
-                                                          'IconButton_backend_call');
-
-                                                      await _model
-                                                          .createAIMessage!
-                                                          .reference
-                                                          .update(
-                                                              createChatMessagesRecordData(
-                                                        imageNumber: ((_model
-                                                                        .createAIMessage!
-                                                                        .loveNumber *
-                                                                    10 +
-                                                                chatapge2ChatsRecord
-                                                                        .loveNumber *
-                                                                    10)
-                                                            .floor()),
-                                                      ));
-                                                    }
-                                                    // updateChat
+                                                    }, chatMessagesRecordReference1);
                                                     logFirebaseEvent(
-                                                        'IconButton_updateChat');
-
-                                                    await widget.chat!.update({
-                                                      ...createChatsRecordData(
-                                                        lastMessage: _model
-                                                            .createAIMessage
-                                                            ?.text,
-                                                        prompt: _model
-                                                            .createAIMessage
-                                                            ?.nextPrompt,
-                                                      ),
-                                                      'last_message_time':
-                                                          FieldValue
-                                                              .serverTimestamp(),
-                                                      'love_number': FieldValue
-                                                          .increment(_model
-                                                              .createAIMessage!
-                                                              .loveNumber),
-                                                      'user_message_count':
-                                                          FieldValue.increment(
-                                                              1),
-                                                    });
-                                                  } else {
-                                                    logFirebaseEvent(
-                                                        'IconButton_show_snack_bar');
-                                                    ScaffoldMessenger.of(
-                                                            context)
-                                                        .showSnackBar(
-                                                      SnackBar(
-                                                        content: Text(
-                                                          'error',
-                                                          style: TextStyle(
-                                                            color: FlutterFlowTheme
-                                                                    .of(context)
-                                                                .primaryText,
-                                                          ),
-                                                        ),
-                                                        duration: Duration(
-                                                            milliseconds: 4000),
-                                                        backgroundColor:
-                                                            FlutterFlowTheme.of(
-                                                                    context)
-                                                                .secondary,
-                                                      ),
+                                                        'IconButton_scroll_to');
+                                                    await _model
+                                                        .listViewController
+                                                        ?.animateTo(
+                                                      _model
+                                                          .listViewController!
+                                                          .position
+                                                          .maxScrollExtent,
+                                                      duration: Duration(
+                                                          milliseconds: 1),
+                                                      curve: Curves.ease,
                                                     );
-                                                  }
+                                                    logFirebaseEvent(
+                                                        'IconButton_scroll_to');
+                                                    await _model
+                                                        .columnController
+                                                        ?.animateTo(
+                                                      _model
+                                                          .columnController!
+                                                          .position
+                                                          .maxScrollExtent,
+                                                      duration: Duration(
+                                                          milliseconds: 1),
+                                                      curve: Curves.ease,
+                                                    );
+                                                    logFirebaseEvent(
+                                                        'IconButton_clear_text_fields');
+                                                    setState(() {
+                                                      _model.fullNameController
+                                                          ?.clear();
+                                                    });
+                                                    logFirebaseEvent(
+                                                        'IconButton_backend_call');
+                                                    _model.apiResult94f =
+                                                        await ClovaCall.call(
+                                                      text: _model
+                                                          .createUserMessage
+                                                          ?.nextPrompt,
+                                                    );
+                                                    if ((_model.apiResult94f
+                                                            ?.succeeded ??
+                                                        true)) {
+                                                      // createAIMessage
+                                                      logFirebaseEvent(
+                                                          'IconButton_createAIMessage');
 
-                                                  logFirebaseEvent(
-                                                      'IconButton_scroll_to');
-                                                  await _model
-                                                      .listViewController
-                                                      ?.animateTo(
-                                                    _model
-                                                        .listViewController!
-                                                        .position
-                                                        .maxScrollExtent,
-                                                    duration: Duration(
-                                                        milliseconds: 1),
-                                                    curve: Curves.ease,
-                                                  );
-                                                  logFirebaseEvent(
-                                                      'IconButton_scroll_to');
-                                                  await _model.columnController
-                                                      ?.animateTo(
-                                                    _model
-                                                        .columnController!
-                                                        .position
-                                                        .maxScrollExtent,
-                                                    duration: Duration(
-                                                        milliseconds: 1),
-                                                    curve: Curves.ease,
-                                                  );
-                                                  logFirebaseEvent(
-                                                      'IconButton_lottie_animation');
-                                                  await lottieAnimationController
-                                                      .forward();
-                                                  lottieAnimationController
-                                                      .reset();
+                                                      var chatMessagesRecordReference2 =
+                                                          ChatMessagesRecord
+                                                              .collection
+                                                              .doc();
+                                                      await chatMessagesRecordReference2
+                                                          .set({
+                                                        ...createChatMessagesRecordData(
+                                                          user:
+                                                              currentUserReference,
+                                                          chat: widget
+                                                              .chatReference,
+                                                          text: getJsonField(
+                                                            (_model.apiResult94f
+                                                                    ?.jsonBody ??
+                                                                ''),
+                                                            r'''$.result.outputText''',
+                                                          ).toString(),
+                                                          ai: true,
+                                                          nextPrompt:
+                                                              '${_model.createUserMessage?.nextPrompt}${getJsonField(
+                                                            (_model.apiResult94f
+                                                                    ?.jsonBody ??
+                                                                ''),
+                                                            r'''$.result.outputText''',
+                                                          ).toString()}',
+                                                          image: '',
+                                                          loveNumber: (String
+                                                                      aIresponse,
+                                                                  double
+                                                                      randomNumber) {
+                                                            return randomNumber *
+                                                                (aIresponse
+                                                                    .split(' ')
+                                                                    .length);
+                                                          }(
+                                                              getJsonField(
+                                                                (_model.apiResult94f
+                                                                        ?.jsonBody ??
+                                                                    ''),
+                                                                r'''$''',
+                                                              ).toString(),
+                                                              random_data
+                                                                  .randomDouble(
+                                                                      0.005,
+                                                                      0.01)),
+                                                        ),
+                                                        'timestamp': FieldValue
+                                                            .serverTimestamp(),
+                                                      });
+                                                      _model.createAIMessage =
+                                                          ChatMessagesRecord
+                                                              .getDocumentFromData({
+                                                        ...createChatMessagesRecordData(
+                                                          user:
+                                                              currentUserReference,
+                                                          chat: widget
+                                                              .chatReference,
+                                                          text: getJsonField(
+                                                            (_model.apiResult94f
+                                                                    ?.jsonBody ??
+                                                                ''),
+                                                            r'''$.result.outputText''',
+                                                          ).toString(),
+                                                          ai: true,
+                                                          nextPrompt:
+                                                              '${_model.createUserMessage?.nextPrompt}${getJsonField(
+                                                            (_model.apiResult94f
+                                                                    ?.jsonBody ??
+                                                                ''),
+                                                            r'''$.result.outputText''',
+                                                          ).toString()}',
+                                                          image: '',
+                                                          loveNumber: (String
+                                                                      aIresponse,
+                                                                  double
+                                                                      randomNumber) {
+                                                            return randomNumber *
+                                                                (aIresponse
+                                                                    .split(' ')
+                                                                    .length);
+                                                          }(
+                                                              getJsonField(
+                                                                (_model.apiResult94f
+                                                                        ?.jsonBody ??
+                                                                    ''),
+                                                                r'''$''',
+                                                              ).toString(),
+                                                              random_data
+                                                                  .randomDouble(
+                                                                      0.005,
+                                                                      0.01)),
+                                                        ),
+                                                        'timestamp':
+                                                            DateTime.now(),
+                                                      }, chatMessagesRecordReference2);
+                                                      if (functions
+                                                              .floor(
+                                                                  chatapge2ChatsRecord
+                                                                      .loveNumber)
+                                                              .toString() !=
+                                                          (((_model.createAIMessage!
+                                                                              .loveNumber *
+                                                                          10 +
+                                                                      chatapge2ChatsRecord
+                                                                              .loveNumber *
+                                                                          10)
+                                                                  .floor()))
+                                                              .toString()) {
+                                                        logFirebaseEvent(
+                                                            'IconButton_backend_call');
 
-                                                  setState(() {});
-                                                },
+                                                        await _model
+                                                            .createAIMessage!
+                                                            .reference
+                                                            .update(
+                                                                createChatMessagesRecordData(
+                                                          imageNumber: ((_model
+                                                                          .createAIMessage!
+                                                                          .loveNumber *
+                                                                      10 +
+                                                                  chatapge2ChatsRecord
+                                                                          .loveNumber *
+                                                                      10)
+                                                              .floor()),
+                                                        ));
+                                                      }
+                                                      // updateChat
+                                                      logFirebaseEvent(
+                                                          'IconButton_updateChat');
+
+                                                      await widget
+                                                          .chatReference!
+                                                          .update({
+                                                        ...createChatsRecordData(
+                                                          lastMessage: _model
+                                                              .createAIMessage
+                                                              ?.text,
+                                                          prompt: _model
+                                                              .createAIMessage
+                                                              ?.nextPrompt,
+                                                        ),
+                                                        'last_message_time':
+                                                            FieldValue
+                                                                .serverTimestamp(),
+                                                        'love_number': FieldValue
+                                                            .increment(_model
+                                                                .createAIMessage!
+                                                                .loveNumber),
+                                                        'user_message_count':
+                                                            FieldValue
+                                                                .increment(1),
+                                                      });
+                                                    } else {
+                                                      logFirebaseEvent(
+                                                          'IconButton_show_snack_bar');
+                                                      ScaffoldMessenger.of(
+                                                              context)
+                                                          .showSnackBar(
+                                                        SnackBar(
+                                                          content: Text(
+                                                            'error',
+                                                            style: TextStyle(
+                                                              color: FlutterFlowTheme
+                                                                      .of(context)
+                                                                  .primaryText,
+                                                            ),
+                                                          ),
+                                                          duration: Duration(
+                                                              milliseconds:
+                                                                  4000),
+                                                          backgroundColor:
+                                                              FlutterFlowTheme.of(
+                                                                      context)
+                                                                  .secondary,
+                                                        ),
+                                                      );
+                                                    }
+
+                                                    logFirebaseEvent(
+                                                        'IconButton_scroll_to');
+                                                    await _model
+                                                        .listViewController
+                                                        ?.animateTo(
+                                                      _model
+                                                          .listViewController!
+                                                          .position
+                                                          .maxScrollExtent,
+                                                      duration: Duration(
+                                                          milliseconds: 1),
+                                                      curve: Curves.ease,
+                                                    );
+                                                    logFirebaseEvent(
+                                                        'IconButton_scroll_to');
+                                                    await _model
+                                                        .columnController
+                                                        ?.animateTo(
+                                                      _model
+                                                          .columnController!
+                                                          .position
+                                                          .maxScrollExtent,
+                                                      duration: Duration(
+                                                          milliseconds: 1),
+                                                      curve: Curves.ease,
+                                                    );
+                                                    logFirebaseEvent(
+                                                        'IconButton_lottie_animation');
+                                                    await lottieAnimationController
+                                                        .forward();
+                                                    lottieAnimationController
+                                                        .reset();
+
+                                                    setState(() {});
+                                                  },
+                                                ),
                                               ),
                                             ),
-                                          ),
-                                        ],
+                                          ],
+                                        ),
                                       ),
-                                    ),
-                                  ],
+                                    ],
+                                  ),
                                 ),
                               ),
                             ),

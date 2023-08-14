@@ -1,5 +1,6 @@
 import '/auth/firebase_auth/auth_util.dart';
 import '/backend/backend.dart';
+import '/backend/push_notifications/push_notifications_util.dart';
 import '/components/no_more_card_widget.dart';
 import '/flutter_flow/flutter_flow_animations.dart';
 import '/flutter_flow/flutter_flow_icon_button.dart';
@@ -53,6 +54,28 @@ class _AllCharactersWidgetState extends State<AllCharactersWidget>
 
     logFirebaseEvent('screen_view',
         parameters: {'screen_name': 'AllCharacters'});
+    // On page load action.
+    SchedulerBinding.instance.addPostFrameCallback((_) async {
+      logFirebaseEvent('ALL_CHARACTERS_AllCharacters_ON_INIT_STA');
+      if (dateTimeFormat(
+            'yMd',
+            currentUserDocument?.updatedDate,
+            locale: FFLocalizations.of(context).languageCode,
+          ) !=
+          dateTimeFormat(
+            'yMd',
+            getCurrentTimestamp,
+            locale: FFLocalizations.of(context).languageCode,
+          )) {
+        logFirebaseEvent('AllCharacters_backend_call');
+
+        await currentUserReference!.update(createUsersRecordData(
+          dailyCharacterMet: 0,
+          updatedDate: getCurrentTimestamp,
+        ));
+      }
+    });
+
     setupAnimations(
       animationsMap.values.where((anim) =>
           anim.trigger == AnimationTrigger.onActionTrigger ||
@@ -125,372 +148,477 @@ class _AllCharactersWidgetState extends State<AllCharactersWidget>
               Expanded(
                 child: Stack(
                   children: [
-                    AuthUserStreamWidget(
-                      builder: (context) =>
-                          StreamBuilder<List<CharacterRecord>>(
-                        stream: queryCharacterRecord(
-                          queryBuilder: (characterRecord) => characterRecord
-                              .where('order',
-                                  isGreaterThan: valueOrDefault(
-                                      currentUserDocument?.characterMet, 0))
-                              .orderBy('order'),
-                        ),
-                        builder: (context, snapshot) {
-                          // Customize what your widget looks like when it's loading.
-                          if (!snapshot.hasData) {
-                            return Center(
-                              child: SizedBox(
-                                width: 50.0,
-                                height: 50.0,
-                                child: CircularProgressIndicator(
-                                  valueColor: AlwaysStoppedAnimation<Color>(
-                                    FlutterFlowTheme.of(context).primary,
-                                  ),
-                                ),
-                              ),
-                            );
-                          }
-                          List<CharacterRecord>
-                              swipeableStackCharacterRecordList =
-                              snapshot.data!;
-                          if (swipeableStackCharacterRecordList.isEmpty) {
-                            return Container(
-                              width: double.infinity,
-                              height: double.infinity,
-                              child: NoMoreCardWidget(),
-                            );
-                          }
-                          return FlutterFlowSwipeableStack(
-                            topCardHeightFraction: 1.0,
-                            middleCardHeightFraction: 0.0,
-                            bottomCardHeightFraction: 0.0,
-                            topCardWidthFraction: 1.0,
-                            middleCardWidthFraction: 0.0,
-                            bottomCardWidthFraction: 0.0,
-                            onSwipeFn: (index) {},
-                            onLeftSwipe: (index) async {
-                              logFirebaseEvent(
-                                  'ALL_CHARACTERS_SwipeableStack_v1eypxq1_O');
-                              final swipeableStackCharacterRecord =
-                                  swipeableStackCharacterRecordList[index];
-                              logFirebaseEvent('SwipeableStack_backend_call');
-
-                              await MatchRecord.collection.doc().set({
-                                ...createMatchRecordData(
-                                  character:
-                                      swipeableStackCharacterRecordList[index]
-                                          ?.reference,
-                                  user: currentUserReference,
-                                  isMatch: false,
-                                ),
-                                'updatedDate': FieldValue.serverTimestamp(),
-                              });
-                              logFirebaseEvent('SwipeableStack_backend_call');
-
-                              await currentUserReference!.update({
-                                'characterMet': FieldValue.increment(1),
-                              });
-                            },
-                            onRightSwipe: (index) async {
-                              logFirebaseEvent(
-                                  'ALL_CHARACTERS_SwipeableStack_v1eypxq1_O');
-                              final swipeableStackCharacterRecord =
-                                  swipeableStackCharacterRecordList[index];
-                              // createMatch
-                              logFirebaseEvent('SwipeableStack_createMatch');
-
-                              await MatchRecord.collection.doc().set({
-                                ...createMatchRecordData(
-                                  character:
-                                      swipeableStackCharacterRecordList[index]
-                                          ?.reference,
-                                  user: currentUserReference,
-                                  isMatch: true,
-                                ),
-                                'updatedDate': FieldValue.serverTimestamp(),
-                              });
-                              // createChat
-                              logFirebaseEvent('SwipeableStack_createChat');
-
-                              var chatsRecordReference =
-                                  ChatsRecord.collection.doc();
-                              await chatsRecordReference.set({
-                                ...createChatsRecordData(
-                                  userA: currentUserReference,
-                                  character:
-                                      swipeableStackCharacterRecordList[index]
-                                          ?.reference,
-                                  lastMessage:
-                                      swipeableStackCharacterRecordList[index]
-                                          ?.introMessage2,
-                                  loveNumber: 0.1,
-                                  prompt:
-                                      '‘남사친’은 듬직한 남자 사람 친구 처럼 여자들과 대화해 주는 30살 헬스 트레이너 남자 입니다. 상대방은 남사친을 지성민 으로 부릅니다. 남사친은 듬직한 말투를 사용합니다. 남사친은 가볍게 조언하거나, 가르치려 들지 않고, 상대방의 입장을 공감해 주고 들어주는 것에 집중 합니다. 너무 무섭지 않게 대화 합니다. 상대방의 대화 내용에 맞게, 남사친의 대답을 만들어주세요. 남사친의 대답을 만들 때 질문도 자주 해주세요. 남사친의 대답을 만들 때 5글자 이상으로 길게 만들어주세요. 남사친은 상대방의 관심사에 따라 이야기 합니다. \\n남사친 : 안녕 앞으로 잘 부탁해! \\n상대방 : 고마워 \\n남사친 : 잘부탁합니당 \\n상대방 : 그래 \\n남사친 : 오늘도 힘내고 기운차게 보내자\\n상대방 :응응 \\n남사친 : ${swipeableStackCharacterRecordList[index]?.introMessage1}\\n남사친 : ${swipeableStackCharacterRecordList[index]?.introMessage2}',
-                                  userMessageCount: 0,
-                                  imageCount: 1,
-                                ),
-                                'last_message_time':
-                                    FieldValue.serverTimestamp(),
-                              });
-                              _model.chatMade =
-                                  ChatsRecord.getDocumentFromData({
-                                ...createChatsRecordData(
-                                  userA: currentUserReference,
-                                  character:
-                                      swipeableStackCharacterRecordList[index]
-                                          ?.reference,
-                                  lastMessage:
-                                      swipeableStackCharacterRecordList[index]
-                                          ?.introMessage2,
-                                  loveNumber: 0.1,
-                                  prompt:
-                                      '‘남사친’은 듬직한 남자 사람 친구 처럼 여자들과 대화해 주는 30살 헬스 트레이너 남자 입니다. 상대방은 남사친을 지성민 으로 부릅니다. 남사친은 듬직한 말투를 사용합니다. 남사친은 가볍게 조언하거나, 가르치려 들지 않고, 상대방의 입장을 공감해 주고 들어주는 것에 집중 합니다. 너무 무섭지 않게 대화 합니다. 상대방의 대화 내용에 맞게, 남사친의 대답을 만들어주세요. 남사친의 대답을 만들 때 질문도 자주 해주세요. 남사친의 대답을 만들 때 5글자 이상으로 길게 만들어주세요. 남사친은 상대방의 관심사에 따라 이야기 합니다. \\n남사친 : 안녕 앞으로 잘 부탁해! \\n상대방 : 고마워 \\n남사친 : 잘부탁합니당 \\n상대방 : 그래 \\n남사친 : 오늘도 힘내고 기운차게 보내자\\n상대방 :응응 \\n남사친 : ${swipeableStackCharacterRecordList[index]?.introMessage1}\\n남사친 : ${swipeableStackCharacterRecordList[index]?.introMessage2}',
-                                  userMessageCount: 0,
-                                  imageCount: 1,
-                                ),
-                                'last_message_time': DateTime.now(),
-                              }, chatsRecordReference);
-                              // createMessage1
-                              logFirebaseEvent('SwipeableStack_createMessage1');
-
-                              await ChatMessagesRecord.collection.doc().set({
-                                ...createChatMessagesRecordData(
-                                  user: currentUserReference,
-                                  chat: _model.chatMade?.reference,
-                                  text: swipeableStackCharacterRecordList[index]
-                                      ?.introMessage1,
-                                  ai: true,
-                                  nextPrompt: '',
-                                ),
-                                'timestamp': FieldValue.serverTimestamp(),
-                              });
-                              // createMessage2
-                              logFirebaseEvent('SwipeableStack_createMessage2');
-
-                              await ChatMessagesRecord.collection.doc().set({
-                                ...createChatMessagesRecordData(
-                                  user: currentUserReference,
-                                  chat: _model.chatMade?.reference,
-                                  text: swipeableStackCharacterRecordList[index]
-                                      ?.introMessage2,
-                                  ai: true,
-                                  nextPrompt:
-                                      '‘남사친’은 듬직한 남자 사람 친구 처럼 여자들과 대화해 주는 30살 헬스 트레이너 남자 입니다. 상대방은 남사친을 지성민 으로 부릅니다. 남사친은 듬직한 말투를 사용합니다. 남사친은 가볍게 조언하거나, 가르치려 들지 않고, 상대방의 입장을 공감해 주고 들어주는 것에 집중 합니다. 너무 무섭지 않게 대화 합니다. 상대방의 대화 내용에 맞게, 남사친의 대답을 만들어주세요. 남사친의 대답을 만들 때 질문도 자주 해주세요. 남사친의 대답을 만들 때 5글자 이상으로 길게 만들어주세요. 남사친은 상대방의 관심사에 따라 이야기 합니다. \\n남사친 : 안녕 앞으로 잘 부탁해! \\n상대방 : 고마워 \\n남사친 : 잘부탁합니당 \\n상대방 : 그래 \\n남사친 : 오늘도 힘내고 기운차게 보내자\\n상대방 :응응 \\n남사친 : ${swipeableStackCharacterRecordList[index]?.introMessage1}\\n남사친 : ${swipeableStackCharacterRecordList[index]?.introMessage2}',
-                                  image:
-                                      swipeableStackCharacterRecordList[index]
-                                          ?.profileImage,
-                                  imageNumber: 1,
-                                ),
-                                'timestamp': FieldValue.serverTimestamp(),
-                              });
-                              // updateCount
-                              logFirebaseEvent('SwipeableStack_updateCount');
-
-                              await currentUserReference!.update({
-                                'characterMet': FieldValue.increment(1),
-                              });
-                              logFirebaseEvent(
-                                  'SwipeableStack_lottie_animation');
-                              await lottieAnimationController.forward();
-                              lottieAnimationController.reset();
-                              logFirebaseEvent('SwipeableStack_show_snack_bar');
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
-                                  content: Text(
-                                    '매치 성공! 채팅을 시작하세요',
-                                    style: TextStyle(
-                                      color: FlutterFlowTheme.of(context)
-                                          .primaryText,
+                    if (valueOrDefault(
+                            currentUserDocument?.dailyCharacterMet, 0) <=
+                        10)
+                      AuthUserStreamWidget(
+                        builder: (context) =>
+                            StreamBuilder<List<CharacterRecord>>(
+                          stream: queryCharacterRecord(
+                            queryBuilder: (characterRecord) => characterRecord
+                                .where('order',
+                                    isGreaterThan: valueOrDefault(
+                                        currentUserDocument?.characterMet, 0))
+                                .orderBy('order'),
+                          ),
+                          builder: (context, snapshot) {
+                            // Customize what your widget looks like when it's loading.
+                            if (!snapshot.hasData) {
+                              return Center(
+                                child: SizedBox(
+                                  width: 50.0,
+                                  height: 50.0,
+                                  child: CircularProgressIndicator(
+                                    valueColor: AlwaysStoppedAnimation<Color>(
+                                      FlutterFlowTheme.of(context).primary,
                                     ),
-                                  ),
-                                  duration: Duration(milliseconds: 5000),
-                                  backgroundColor:
-                                      FlutterFlowTheme.of(context).secondary,
-                                  action: SnackBarAction(
-                                    label: '채팅',
-                                    textColor: Colors.white,
-                                    onPressed: () async {
-                                      context.pushNamed(
-                                        'chatapge2',
-                                        queryParameters: {
-                                          'character': serializeParam(
-                                            swipeableStackCharacterRecordList[
-                                                    index]
-                                                ?.reference,
-                                            ParamType.DocumentReference,
-                                          ),
-                                          'chat': serializeParam(
-                                            _model.chatMade?.reference,
-                                            ParamType.DocumentReference,
-                                          ),
-                                          'characterProfile': serializeParam(
-                                            swipeableStackCharacterRecordList[
-                                                    index]
-                                                ?.profileImage,
-                                            ParamType.String,
-                                          ),
-                                          'characterName': serializeParam(
-                                            swipeableStackCharacterRecordList[
-                                                    index]
-                                                ?.name,
-                                            ParamType.String,
-                                          ),
-                                          'prompt': serializeParam(
-                                            _model.chatMade?.prompt,
-                                            ParamType.String,
-                                          ),
-                                        }.withoutNulls,
-                                      );
-                                    },
                                   ),
                                 ),
                               );
+                            }
+                            List<CharacterRecord>
+                                swipeableStackCharacterRecordList =
+                                snapshot.data!;
+                            if (swipeableStackCharacterRecordList.isEmpty) {
+                              return Container(
+                                width: double.infinity,
+                                height: double.infinity,
+                                child: NoMoreCardWidget(),
+                              );
+                            }
+                            return FlutterFlowSwipeableStack(
+                              topCardHeightFraction: 1.0,
+                              middleCardHeightFraction: 0.0,
+                              bottomCardHeightFraction: 0.0,
+                              topCardWidthFraction: 1.0,
+                              middleCardWidthFraction: 0.0,
+                              bottomCardWidthFraction: 0.0,
+                              onSwipeFn: (index) {},
+                              onLeftSwipe: (index) async {
+                                logFirebaseEvent(
+                                    'ALL_CHARACTERS_SwipeableStack_v1eypxq1_O');
+                                final swipeableStackCharacterRecord =
+                                    swipeableStackCharacterRecordList[index];
+                                logFirebaseEvent('SwipeableStack_backend_call');
 
-                              setState(() {});
-                            },
-                            onUpSwipe: (index) {},
-                            onDownSwipe: (index) {},
-                            itemBuilder: (context, swipeableStackIndex) {
-                              final swipeableStackCharacterRecord =
-                                  swipeableStackCharacterRecordList[
-                                      swipeableStackIndex];
-                              return Card(
-                                clipBehavior: Clip.antiAliasWithSaveLayer,
-                                color: FlutterFlowTheme.of(context)
-                                    .secondaryBackground,
-                                elevation: 4.0,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(8.0),
-                                ),
-                                child: Column(
-                                  mainAxisSize: MainAxisSize.max,
-                                  children: [
-                                    Stack(
-                                      alignment: AlignmentDirectional(0.0, 1.0),
-                                      children: [
-                                        ClipRRect(
-                                          borderRadius:
-                                              BorderRadius.circular(8.0),
-                                          child: Image.network(
-                                            swipeableStackCharacterRecord
-                                                .profileImage,
-                                            width: double.infinity,
-                                            height: MediaQuery.sizeOf(context)
-                                                    .height *
-                                                0.7,
-                                            fit: BoxFit.cover,
-                                          ),
-                                        ),
-                                        Padding(
-                                          padding:
-                                              EdgeInsetsDirectional.fromSTEB(
-                                                  20.0, 0.0, 0.0, 20.0),
-                                          child: Row(
-                                            mainAxisSize: MainAxisSize.max,
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.center,
-                                            children: [
-                                              Text(
-                                                swipeableStackCharacterRecord
-                                                    .name,
-                                                style:
-                                                    FlutterFlowTheme.of(context)
-                                                        .bodyMedium
-                                                        .override(
-                                                          fontFamily: 'NIXGON',
-                                                          color: Colors.white,
-                                                          fontSize: 32.0,
-                                                          fontWeight:
-                                                              FontWeight.bold,
-                                                          useGoogleFonts: false,
-                                                        ),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      ],
+                                await MatchRecord.collection.doc().set({
+                                  ...createMatchRecordData(
+                                    character:
+                                        swipeableStackCharacterRecordList[index]
+                                            ?.reference,
+                                    user: currentUserReference,
+                                    isMatch: false,
+                                  ),
+                                  'updatedDate': FieldValue.serverTimestamp(),
+                                });
+                                logFirebaseEvent('SwipeableStack_backend_call');
+
+                                await currentUserReference!.update({
+                                  'characterMet': FieldValue.increment(1),
+                                  'dailyCharacterMet': FieldValue.increment(1),
+                                });
+                              },
+                              onRightSwipe: (index) async {
+                                logFirebaseEvent(
+                                    'ALL_CHARACTERS_SwipeableStack_v1eypxq1_O');
+                                final swipeableStackCharacterRecord =
+                                    swipeableStackCharacterRecordList[index];
+                                // createMatch
+                                logFirebaseEvent('SwipeableStack_createMatch');
+
+                                await MatchRecord.collection.doc().set({
+                                  ...createMatchRecordData(
+                                    character:
+                                        swipeableStackCharacterRecordList[index]
+                                            ?.reference,
+                                    user: currentUserReference,
+                                    isMatch: true,
+                                  ),
+                                  'updatedDate': FieldValue.serverTimestamp(),
+                                });
+                                // createChat
+                                logFirebaseEvent('SwipeableStack_createChat');
+
+                                var chatsRecordReference =
+                                    ChatsRecord.collection.doc();
+                                await chatsRecordReference.set({
+                                  ...createChatsRecordData(
+                                    userA: currentUserReference,
+                                    character:
+                                        swipeableStackCharacterRecordList[index]
+                                            ?.reference,
+                                    lastMessage:
+                                        swipeableStackCharacterRecordList[index]
+                                            ?.introMessage2,
+                                    loveNumber: 0.1,
+                                    prompt:
+                                        '‘남사친’은 듬직한 남자 사람 친구 처럼 여자들과 대화해 주는 30살 헬스 트레이너 남자 입니다. 상대방은 남사친을 지성민 으로 부릅니다. 남사친은 듬직한 말투를 사용합니다. 남사친은 가볍게 조언하거나, 가르치려 들지 않고, 상대방의 입장을 공감해 주고 들어주는 것에 집중 합니다. 너무 무섭지 않게 대화 합니다. 상대방의 대화 내용에 맞게, 남사친의 대답을 만들어주세요. 남사친의 대답을 만들 때 질문도 자주 해주세요. 남사친의 대답을 만들 때 5글자 이상으로 길게 만들어주세요. 남사친은 상대방의 관심사에 따라 이야기 합니다. \\n남사친 : 안녕 앞으로 잘 부탁해! \\n상대방 : 고마워 \\n남사친 : 잘부탁합니당 \\n상대방 : 그래 \\n남사친 : 오늘도 힘내고 기운차게 보내자\\n상대방 :응응 \\n남사친 : ${swipeableStackCharacterRecordList[index]?.introMessage1}\\n남사친 : ${swipeableStackCharacterRecordList[index]?.introMessage2}',
+                                    userMessageCount: 0,
+                                    imageCount: 1,
+                                  ),
+                                  'last_message_time':
+                                      FieldValue.serverTimestamp(),
+                                });
+                                _model.chatMade =
+                                    ChatsRecord.getDocumentFromData({
+                                  ...createChatsRecordData(
+                                    userA: currentUserReference,
+                                    character:
+                                        swipeableStackCharacterRecordList[index]
+                                            ?.reference,
+                                    lastMessage:
+                                        swipeableStackCharacterRecordList[index]
+                                            ?.introMessage2,
+                                    loveNumber: 0.1,
+                                    prompt:
+                                        '‘남사친’은 듬직한 남자 사람 친구 처럼 여자들과 대화해 주는 30살 헬스 트레이너 남자 입니다. 상대방은 남사친을 지성민 으로 부릅니다. 남사친은 듬직한 말투를 사용합니다. 남사친은 가볍게 조언하거나, 가르치려 들지 않고, 상대방의 입장을 공감해 주고 들어주는 것에 집중 합니다. 너무 무섭지 않게 대화 합니다. 상대방의 대화 내용에 맞게, 남사친의 대답을 만들어주세요. 남사친의 대답을 만들 때 질문도 자주 해주세요. 남사친의 대답을 만들 때 5글자 이상으로 길게 만들어주세요. 남사친은 상대방의 관심사에 따라 이야기 합니다. \\n남사친 : 안녕 앞으로 잘 부탁해! \\n상대방 : 고마워 \\n남사친 : 잘부탁합니당 \\n상대방 : 그래 \\n남사친 : 오늘도 힘내고 기운차게 보내자\\n상대방 :응응 \\n남사친 : ${swipeableStackCharacterRecordList[index]?.introMessage1}\\n남사친 : ${swipeableStackCharacterRecordList[index]?.introMessage2}',
+                                    userMessageCount: 0,
+                                    imageCount: 1,
+                                  ),
+                                  'last_message_time': DateTime.now(),
+                                }, chatsRecordReference);
+                                // createMessage1
+                                logFirebaseEvent(
+                                    'SwipeableStack_createMessage1');
+
+                                var chatMessagesRecordReference1 =
+                                    ChatMessagesRecord.collection.doc();
+                                await chatMessagesRecordReference1.set({
+                                  ...createChatMessagesRecordData(
+                                    user: currentUserReference,
+                                    chat: _model.chatMade?.reference,
+                                    text:
+                                        swipeableStackCharacterRecordList[index]
+                                            ?.introMessage1,
+                                    ai: true,
+                                    nextPrompt: '',
+                                  ),
+                                  'timestamp': FieldValue.serverTimestamp(),
+                                });
+                                _model.createMessage1 =
+                                    ChatMessagesRecord.getDocumentFromData({
+                                  ...createChatMessagesRecordData(
+                                    user: currentUserReference,
+                                    chat: _model.chatMade?.reference,
+                                    text:
+                                        swipeableStackCharacterRecordList[index]
+                                            ?.introMessage1,
+                                    ai: true,
+                                    nextPrompt: '',
+                                  ),
+                                  'timestamp': DateTime.now(),
+                                }, chatMessagesRecordReference1);
+                                // createMessage2
+                                logFirebaseEvent(
+                                    'SwipeableStack_createMessage2');
+
+                                var chatMessagesRecordReference2 =
+                                    ChatMessagesRecord.collection.doc();
+                                await chatMessagesRecordReference2.set({
+                                  ...createChatMessagesRecordData(
+                                    user: currentUserReference,
+                                    chat: _model.chatMade?.reference,
+                                    text:
+                                        swipeableStackCharacterRecordList[index]
+                                            ?.introMessage2,
+                                    ai: true,
+                                    nextPrompt:
+                                        '‘남사친’은 듬직한 남자 사람 친구 처럼 여자들과 대화해 주는 30살 헬스 트레이너 남자 입니다. 상대방은 남사친을 지성민 으로 부릅니다. 남사친은 듬직한 말투를 사용합니다. 남사친은 가볍게 조언하거나, 가르치려 들지 않고, 상대방의 입장을 공감해 주고 들어주는 것에 집중 합니다. 너무 무섭지 않게 대화 합니다. 상대방의 대화 내용에 맞게, 남사친의 대답을 만들어주세요. 남사친의 대답을 만들 때 질문도 자주 해주세요. 남사친의 대답을 만들 때 5글자 이상으로 길게 만들어주세요. 남사친은 상대방의 관심사에 따라 이야기 합니다. \\n남사친 : 안녕 앞으로 잘 부탁해! \\n상대방 : 고마워 \\n남사친 : 잘부탁합니당 \\n상대방 : 그래 \\n남사친 : 오늘도 힘내고 기운차게 보내자\\n상대방 :응응 \\n남사친 : ${swipeableStackCharacterRecordList[index]?.introMessage1}\\n남사친 : ${swipeableStackCharacterRecordList[index]?.introMessage2}',
+                                    image:
+                                        swipeableStackCharacterRecordList[index]
+                                            ?.profileImage,
+                                    imageNumber: 1,
+                                  ),
+                                  'timestamp': FieldValue.serverTimestamp(),
+                                });
+                                _model.createMessage2 =
+                                    ChatMessagesRecord.getDocumentFromData({
+                                  ...createChatMessagesRecordData(
+                                    user: currentUserReference,
+                                    chat: _model.chatMade?.reference,
+                                    text:
+                                        swipeableStackCharacterRecordList[index]
+                                            ?.introMessage2,
+                                    ai: true,
+                                    nextPrompt:
+                                        '‘남사친’은 듬직한 남자 사람 친구 처럼 여자들과 대화해 주는 30살 헬스 트레이너 남자 입니다. 상대방은 남사친을 지성민 으로 부릅니다. 남사친은 듬직한 말투를 사용합니다. 남사친은 가볍게 조언하거나, 가르치려 들지 않고, 상대방의 입장을 공감해 주고 들어주는 것에 집중 합니다. 너무 무섭지 않게 대화 합니다. 상대방의 대화 내용에 맞게, 남사친의 대답을 만들어주세요. 남사친의 대답을 만들 때 질문도 자주 해주세요. 남사친의 대답을 만들 때 5글자 이상으로 길게 만들어주세요. 남사친은 상대방의 관심사에 따라 이야기 합니다. \\n남사친 : 안녕 앞으로 잘 부탁해! \\n상대방 : 고마워 \\n남사친 : 잘부탁합니당 \\n상대방 : 그래 \\n남사친 : 오늘도 힘내고 기운차게 보내자\\n상대방 :응응 \\n남사친 : ${swipeableStackCharacterRecordList[index]?.introMessage1}\\n남사친 : ${swipeableStackCharacterRecordList[index]?.introMessage2}',
+                                    image:
+                                        swipeableStackCharacterRecordList[index]
+                                            ?.profileImage,
+                                    imageNumber: 1,
+                                  ),
+                                  'timestamp': DateTime.now(),
+                                }, chatMessagesRecordReference2);
+                                // updateCount
+                                logFirebaseEvent('SwipeableStack_updateCount');
+
+                                await currentUserReference!.update({
+                                  'characterMet': FieldValue.increment(1),
+                                  'dailyCharacterMet': FieldValue.increment(1),
+                                });
+                                logFirebaseEvent(
+                                    'SwipeableStack_lottie_animation');
+                                await lottieAnimationController.forward();
+                                lottieAnimationController.reset();
+                                logFirebaseEvent(
+                                    'SwipeableStack_show_snack_bar');
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text(
+                                      '매치 성공! 채팅을 시작하세요',
+                                      style: TextStyle(
+                                        color: FlutterFlowTheme.of(context)
+                                            .primaryText,
+                                      ),
                                     ),
-                                    Padding(
-                                      padding: EdgeInsetsDirectional.fromSTEB(
-                                          0.0, 20.0, 0.0, 20.0),
-                                      child: Row(
-                                        mainAxisSize: MainAxisSize.max,
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        children: [
-                                          FlutterFlowIconButton(
-                                            borderColor: Color(0xFFFF2E54),
-                                            borderRadius: 100.0,
-                                            borderWidth: 1.0,
-                                            buttonSize: 60.0,
-                                            icon: Icon(
-                                              Icons.cancel,
-                                              color: Color(0xFFFF2E54),
-                                              size: 45.0,
+                                    duration: Duration(milliseconds: 5000),
+                                    backgroundColor:
+                                        FlutterFlowTheme.of(context).secondary,
+                                    action: SnackBarAction(
+                                      label: '채팅',
+                                      textColor: Colors.white,
+                                      onPressed: () async {
+                                        context.pushNamed(
+                                          'chatapge2',
+                                          queryParameters: {
+                                            'character': serializeParam(
+                                              swipeableStackCharacterRecordList[
+                                                      index]
+                                                  ?.reference,
+                                              ParamType.DocumentReference,
                                             ),
-                                            onPressed: () async {
-                                              logFirebaseEvent(
-                                                  'ALL_CHARACTERS_PAGE_cancel_ICN_ON_TAP');
-                                              logFirebaseEvent(
-                                                  'IconButton_swipeable_stack');
-                                              _model.swipeableStackController
-                                                  .triggerSwipeLeft();
-                                            },
+                                            'chat': serializeParam(
+                                              _model.chatMade,
+                                              ParamType.Document,
+                                            ),
+                                            'characterProfile': serializeParam(
+                                              swipeableStackCharacterRecordList[
+                                                      index]
+                                                  ?.profileImage,
+                                              ParamType.String,
+                                            ),
+                                            'characterName': serializeParam(
+                                              swipeableStackCharacterRecordList[
+                                                      index]
+                                                  ?.name,
+                                              ParamType.String,
+                                            ),
+                                            'prompt': serializeParam(
+                                              _model.chatMade?.prompt,
+                                              ParamType.String,
+                                            ),
+                                            'chatReference': serializeParam(
+                                              _model.chatMade?.reference,
+                                              ParamType.DocumentReference,
+                                            ),
+                                          }.withoutNulls,
+                                          extra: <String, dynamic>{
+                                            'chat': _model.chatMade,
+                                          },
+                                        );
+                                      },
+                                    ),
+                                  ),
+                                );
+                                // push_1message
+                                logFirebaseEvent(
+                                    'SwipeableStack_push_1message');
+                                triggerPushNotification(
+                                  notificationTitle: '남사친',
+                                  notificationText: _model.createMessage1!.text,
+                                  userRefs: [currentUserReference!],
+                                  initialPageName: 'chatapge2',
+                                  parameterData: {
+                                    'character':
+                                        swipeableStackCharacterRecordList[index]
+                                            ?.reference,
+                                    'chatReference': _model.chatMade?.reference,
+                                    'characterProfile':
+                                        swipeableStackCharacterRecordList[index]
+                                            ?.profileImage,
+                                    'prompt': _model.chatMade?.prompt,
+                                    'chat': _model.chatMade,
+                                    'characterName':
+                                        swipeableStackCharacterRecordList[index]
+                                            ?.name,
+                                  },
+                                );
+                                logFirebaseEvent('SwipeableStack_wait__delay');
+                                await Future.delayed(
+                                    const Duration(milliseconds: 2000));
+                                // push_2message
+                                logFirebaseEvent(
+                                    'SwipeableStack_push_2message');
+                                triggerPushNotification(
+                                  notificationTitle: '남사친',
+                                  notificationText: _model.createMessage2!.text,
+                                  userRefs: [currentUserReference!],
+                                  initialPageName: 'chatapge2',
+                                  parameterData: {
+                                    'character':
+                                        swipeableStackCharacterRecordList[index]
+                                            ?.reference,
+                                    'chatReference': _model.chatMade?.reference,
+                                    'characterProfile':
+                                        swipeableStackCharacterRecordList[index]
+                                            ?.profileImage,
+                                    'prompt': _model.chatMade?.prompt,
+                                    'chat': _model.chatMade,
+                                    'characterName':
+                                        swipeableStackCharacterRecordList[index]
+                                            ?.name,
+                                  },
+                                );
+
+                                setState(() {});
+                              },
+                              onUpSwipe: (index) {},
+                              onDownSwipe: (index) {},
+                              itemBuilder: (context, swipeableStackIndex) {
+                                final swipeableStackCharacterRecord =
+                                    swipeableStackCharacterRecordList[
+                                        swipeableStackIndex];
+                                return Card(
+                                  clipBehavior: Clip.antiAliasWithSaveLayer,
+                                  color: FlutterFlowTheme.of(context)
+                                      .secondaryBackground,
+                                  elevation: 4.0,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(8.0),
+                                  ),
+                                  child: Column(
+                                    mainAxisSize: MainAxisSize.max,
+                                    children: [
+                                      Stack(
+                                        alignment:
+                                            AlignmentDirectional(0.0, 1.0),
+                                        children: [
+                                          ClipRRect(
+                                            borderRadius:
+                                                BorderRadius.circular(8.0),
+                                            child: Image.network(
+                                              swipeableStackCharacterRecord
+                                                  .profileImage,
+                                              width: double.infinity,
+                                              height: MediaQuery.sizeOf(context)
+                                                      .height *
+                                                  0.7,
+                                              fit: BoxFit.cover,
+                                            ),
                                           ),
                                           Padding(
                                             padding:
                                                 EdgeInsetsDirectional.fromSTEB(
-                                                    40.0, 0.0, 0.0, 0.0),
-                                            child: FlutterFlowIconButton(
-                                              borderColor: Color(0xFF28E7AB),
-                                              borderRadius: 100.0,
-                                              borderWidth: 1.0,
-                                              buttonSize: 60.0,
-                                              icon: Icon(
-                                                Icons.favorite,
-                                                color: Color(0xFF28E7AB),
-                                                size: 45.0,
-                                              ),
-                                              onPressed: () async {
-                                                logFirebaseEvent(
-                                                    'ALL_CHARACTERS_PAGE_favorite_ICN_ON_TAP');
-                                                logFirebaseEvent(
-                                                    'IconButton_swipeable_stack');
-                                                _model.swipeableStackController
-                                                    .triggerSwipeRight();
-                                              },
+                                                    20.0, 0.0, 0.0, 20.0),
+                                            child: Row(
+                                              mainAxisSize: MainAxisSize.max,
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.center,
+                                              children: [
+                                                Text(
+                                                  swipeableStackCharacterRecord
+                                                      .name,
+                                                  style: FlutterFlowTheme.of(
+                                                          context)
+                                                      .bodyMedium
+                                                      .override(
+                                                        fontFamily: 'NIXGON',
+                                                        color: Colors.white,
+                                                        fontSize: 32.0,
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        useGoogleFonts: false,
+                                                      ),
+                                                ),
+                                              ],
                                             ),
                                           ),
                                         ],
                                       ),
-                                    ),
-                                    Text(
-                                      valueOrDefault(
-                                              currentUserDocument?.characterMet,
-                                              0)
-                                          .toString(),
-                                      style: FlutterFlowTheme.of(context)
-                                          .bodyMedium
-                                          .override(
-                                            fontFamily: 'Open Sans',
-                                            color: Colors.white,
-                                          ),
-                                    ),
-                                  ],
-                                ),
-                              );
-                            },
-                            itemCount: swipeableStackCharacterRecordList.length,
-                            controller: _model.swipeableStackController,
-                            enableSwipeUp: false,
-                            enableSwipeDown: false,
-                          ).animateOnActionTrigger(
-                            animationsMap[
-                                'swipeableStackOnActionTriggerAnimation']!,
-                          );
-                        },
+                                      Padding(
+                                        padding: EdgeInsetsDirectional.fromSTEB(
+                                            0.0, 20.0, 0.0, 20.0),
+                                        child: Row(
+                                          mainAxisSize: MainAxisSize.max,
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: [
+                                            FlutterFlowIconButton(
+                                              borderColor: Color(0xFFFF2E54),
+                                              borderRadius: 100.0,
+                                              borderWidth: 1.0,
+                                              buttonSize: 60.0,
+                                              icon: Icon(
+                                                Icons.cancel,
+                                                color: Color(0xFFFF2E54),
+                                                size: 45.0,
+                                              ),
+                                              onPressed: () async {
+                                                logFirebaseEvent(
+                                                    'ALL_CHARACTERS_PAGE_cancel_ICN_ON_TAP');
+                                                logFirebaseEvent(
+                                                    'IconButton_swipeable_stack');
+                                                _model.swipeableStackController
+                                                    .triggerSwipeLeft();
+                                              },
+                                            ),
+                                            Padding(
+                                              padding: EdgeInsetsDirectional
+                                                  .fromSTEB(
+                                                      40.0, 0.0, 0.0, 0.0),
+                                              child: FlutterFlowIconButton(
+                                                borderColor: Color(0xFF28E7AB),
+                                                borderRadius: 100.0,
+                                                borderWidth: 1.0,
+                                                buttonSize: 60.0,
+                                                icon: Icon(
+                                                  Icons.favorite,
+                                                  color: Color(0xFF28E7AB),
+                                                  size: 45.0,
+                                                ),
+                                                onPressed: () async {
+                                                  logFirebaseEvent(
+                                                      'ALL_CHARACTERS_PAGE_favorite_ICN_ON_TAP');
+                                                  logFirebaseEvent(
+                                                      'IconButton_swipeable_stack');
+                                                  _model
+                                                      .swipeableStackController
+                                                      .triggerSwipeRight();
+                                                },
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                      Text(
+                                        valueOrDefault(
+                                                currentUserDocument
+                                                    ?.characterMet,
+                                                0)
+                                            .toString(),
+                                        style: FlutterFlowTheme.of(context)
+                                            .bodyMedium
+                                            .override(
+                                              fontFamily: 'Open Sans',
+                                              color: Colors.white,
+                                            ),
+                                      ),
+                                    ],
+                                  ),
+                                );
+                              },
+                              itemCount:
+                                  swipeableStackCharacterRecordList.length,
+                              controller: _model.swipeableStackController,
+                              enableSwipeUp: false,
+                              enableSwipeDown: false,
+                            ).animateOnActionTrigger(
+                              animationsMap[
+                                  'swipeableStackOnActionTriggerAnimation']!,
+                            );
+                          },
+                        ),
                       ),
-                    ),
                     Align(
                       alignment: AlignmentDirectional(0.0, 0.0),
                       child: Lottie.network(
@@ -503,6 +631,16 @@ class _AllCharactersWidgetState extends State<AllCharactersWidget>
                             .duration = composition.duration,
                       ),
                     ),
+                    if (valueOrDefault(
+                            currentUserDocument?.dailyCharacterMet, 0) >
+                        10)
+                      AuthUserStreamWidget(
+                        builder: (context) => wrapWithModel(
+                          model: _model.noMoreCardModel,
+                          updateCallback: () => setState(() {}),
+                          child: NoMoreCardWidget(),
+                        ),
+                      ),
                   ],
                 ),
               ),

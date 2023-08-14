@@ -51,6 +51,16 @@ class UsersRecord extends FirestoreRecord {
   int get characterMet => _characterMet ?? 0;
   bool hasCharacterMet() => _characterMet != null;
 
+  // "dailyCharacterMet" field.
+  int? _dailyCharacterMet;
+  int get dailyCharacterMet => _dailyCharacterMet ?? 0;
+  bool hasDailyCharacterMet() => _dailyCharacterMet != null;
+
+  // "updatedDate" field.
+  DateTime? _updatedDate;
+  DateTime? get updatedDate => _updatedDate;
+  bool hasUpdatedDate() => _updatedDate != null;
+
   void _initializeFields() {
     _email = snapshotData['email'] as String?;
     _displayName = snapshotData['display_name'] as String?;
@@ -59,6 +69,8 @@ class UsersRecord extends FirestoreRecord {
     _createdTime = snapshotData['created_time'] as DateTime?;
     _phoneNumber = snapshotData['phone_number'] as String?;
     _characterMet = castToType<int>(snapshotData['characterMet']);
+    _dailyCharacterMet = castToType<int>(snapshotData['dailyCharacterMet']);
+    _updatedDate = snapshotData['updatedDate'] as DateTime?;
   }
 
   static CollectionReference get collection =>
@@ -102,6 +114,8 @@ Map<String, dynamic> createUsersRecordData({
   DateTime? createdTime,
   String? phoneNumber,
   int? characterMet,
+  int? dailyCharacterMet,
+  DateTime? updatedDate,
 }) {
   final firestoreData = mapToFirestore(
     <String, dynamic>{
@@ -112,6 +126,8 @@ Map<String, dynamic> createUsersRecordData({
       'created_time': createdTime,
       'phone_number': phoneNumber,
       'characterMet': characterMet,
+      'dailyCharacterMet': dailyCharacterMet,
+      'updatedDate': updatedDate,
     }.withoutNulls,
   );
 
@@ -129,7 +145,9 @@ class UsersRecordDocumentEquality implements Equality<UsersRecord> {
         e1?.uid == e2?.uid &&
         e1?.createdTime == e2?.createdTime &&
         e1?.phoneNumber == e2?.phoneNumber &&
-        e1?.characterMet == e2?.characterMet;
+        e1?.characterMet == e2?.characterMet &&
+        e1?.dailyCharacterMet == e2?.dailyCharacterMet &&
+        e1?.updatedDate == e2?.updatedDate;
   }
 
   @override
@@ -140,7 +158,9 @@ class UsersRecordDocumentEquality implements Equality<UsersRecord> {
         e?.uid,
         e?.createdTime,
         e?.phoneNumber,
-        e?.characterMet
+        e?.characterMet,
+        e?.dailyCharacterMet,
+        e?.updatedDate
       ]);
 
   @override

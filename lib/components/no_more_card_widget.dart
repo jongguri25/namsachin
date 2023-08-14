@@ -1,8 +1,5 @@
 import '/flutter_flow/flutter_flow_theme.dart';
-import '/flutter_flow/flutter_flow_timer.dart';
 import '/flutter_flow/flutter_flow_util.dart';
-import '/flutter_flow/custom_functions.dart' as functions;
-import 'package:stop_watch_timer/stop_watch_timer.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
@@ -97,29 +94,6 @@ class _NoMoreCardWidgetState extends State<NoMoreCardWidget> {
                   style: FlutterFlowTheme.of(context).bodyMedium.override(
                         fontFamily: 'NIXGON',
                         fontSize: 32.0,
-                        fontWeight: FontWeight.w500,
-                        useGoogleFonts: false,
-                      ),
-                ),
-              ),
-              Padding(
-                padding: EdgeInsetsDirectional.fromSTEB(0.0, 10.0, 0.0, 0.0),
-                child: FlutterFlowTimer(
-                  initialTime: functions.gettomorrowdate()!.secondsSinceEpoch,
-                  getDisplayTime: (value) =>
-                      StopWatchTimer.getDisplayTime(value),
-                  timer: _model.timerController,
-                  updateStateInterval: Duration(milliseconds: 1000),
-                  onChanged: (value, displayTime, shouldUpdate) {
-                    _model.timerMilliseconds = value;
-                    _model.timerValue = displayTime;
-                    if (shouldUpdate) setState(() {});
-                  },
-                  textAlign: TextAlign.start,
-                  style: FlutterFlowTheme.of(context).headlineSmall.override(
-                        fontFamily: 'NIXGON',
-                        color: Color(0xFF28E7AB),
-                        fontSize: 36.0,
                         fontWeight: FontWeight.w500,
                         useGoogleFonts: false,
                       ),

@@ -27,8 +27,6 @@ class Chatapge2Model extends FlutterFlowModel {
   ScrollController? columnController;
   // State field(s) for ListView widget.
   ScrollController? listViewController;
-  // Model for collectPhoto component.
-  late CollectPhotoModel collectPhotoModel;
   // State field(s) for fullName widget.
   TextEditingController? fullNameController;
   String? Function(BuildContext, String?)? fullNameControllerValidator;
@@ -47,7 +45,6 @@ class Chatapge2Model extends FlutterFlowModel {
     rowController1 = ScrollController();
     columnController = ScrollController();
     listViewController = ScrollController();
-    collectPhotoModel = createModel(context, () => CollectPhotoModel());
     rowController2 = ScrollController();
   }
 
@@ -56,7 +53,6 @@ class Chatapge2Model extends FlutterFlowModel {
     rowController1?.dispose();
     columnController?.dispose();
     listViewController?.dispose();
-    collectPhotoModel.dispose();
     fullNameController?.dispose();
     rowController2?.dispose();
   }

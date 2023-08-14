@@ -709,8 +709,9 @@ class _Profile16CreateEditWidgetState extends State<Profile16CreateEditWidget> {
                                       onTap: () async {
                                         logFirebaseEvent(
                                             'PROFILE16_CREATE_EDIT_Container_rrogva3y');
+                                        // isChatExist
                                         logFirebaseEvent(
-                                            'Container_firestore_query');
+                                            'Container_isChatExist');
                                         _model.isChatExist =
                                             await queryChatsRecordOnce(
                                           queryBuilder: (chatsRecord) =>
@@ -739,8 +740,8 @@ class _Profile16CreateEditWidgetState extends State<Profile16CreateEditWidget> {
                                                 ParamType.DocumentReference,
                                               ),
                                               'chat': serializeParam(
-                                                _model.isChatExist?.reference,
-                                                ParamType.DocumentReference,
+                                                _model.isChatExist,
+                                                ParamType.Document,
                                               ),
                                               'characterProfile':
                                                   serializeParam(
@@ -756,7 +757,14 @@ class _Profile16CreateEditWidgetState extends State<Profile16CreateEditWidget> {
                                                 _model.isChatExist?.prompt,
                                                 ParamType.String,
                                               ),
+                                              'chatReference': serializeParam(
+                                                _model.isChatExist?.reference,
+                                                ParamType.DocumentReference,
+                                              ),
                                             }.withoutNulls,
+                                            extra: <String, dynamic>{
+                                              'chat': _model.isChatExist,
+                                            },
                                           );
                                         } else {
                                           // createChat
@@ -877,8 +885,8 @@ class _Profile16CreateEditWidgetState extends State<Profile16CreateEditWidget> {
                                                 ParamType.DocumentReference,
                                               ),
                                               'chat': serializeParam(
-                                                _model.chatMade?.reference,
-                                                ParamType.DocumentReference,
+                                                _model.chatMade,
+                                                ParamType.Document,
                                               ),
                                               'characterProfile':
                                                   serializeParam(
@@ -894,7 +902,14 @@ class _Profile16CreateEditWidgetState extends State<Profile16CreateEditWidget> {
                                                 _model.chatMade?.prompt,
                                                 ParamType.String,
                                               ),
+                                              'chatReference': serializeParam(
+                                                _model.chatMade?.reference,
+                                                ParamType.DocumentReference,
+                                              ),
                                             }.withoutNulls,
+                                            extra: <String, dynamic>{
+                                              'chat': _model.chatMade,
+                                            },
                                           );
                                         }
 

@@ -148,10 +148,6 @@ class _CollectPhotoWidgetState extends State<CollectPhotoWidget> {
                                   'COLLECT_PHOTO_COMP_확인_BTN_ON_TAP');
                               logFirebaseEvent('Button_bottom_sheet');
                               Navigator.pop(context);
-                              logFirebaseEvent('Button_update_widget_state');
-                              setState(() {
-                                _model.hasSeen = true;
-                              });
                             },
                             text: '확인',
                             options: FFButtonOptions(

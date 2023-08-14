@@ -158,8 +158,8 @@ class _AllChatsPageWidgetState extends State<AllChatsPageWidget> {
                                         ParamType.DocumentReference,
                                       ),
                                       'chat': serializeParam(
-                                        listViewChatsRecord.reference,
-                                        ParamType.DocumentReference,
+                                        listViewChatsRecord,
+                                        ParamType.Document,
                                       ),
                                       'characterProfile': serializeParam(
                                         containerCharacterRecord.profileImage,
@@ -173,7 +173,14 @@ class _AllChatsPageWidgetState extends State<AllChatsPageWidget> {
                                         listViewChatsRecord.prompt,
                                         ParamType.String,
                                       ),
+                                      'chatReference': serializeParam(
+                                        listViewChatsRecord.reference,
+                                        ParamType.DocumentReference,
+                                      ),
                                     }.withoutNulls,
+                                    extra: <String, dynamic>{
+                                      'chat': listViewChatsRecord,
+                                    },
                                   );
                                 },
                                 child: Container(
