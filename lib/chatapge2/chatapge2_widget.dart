@@ -2,6 +2,7 @@ import '/auth/firebase_auth/auth_util.dart';
 import '/backend/api_requests/api_calls.dart';
 import '/backend/backend.dart';
 import '/components/collect_photo_widget.dart';
+import '/flutter_flow/flutter_flow_animations.dart';
 import '/flutter_flow/flutter_flow_expanded_image_view.dart';
 import '/flutter_flow/flutter_flow_icon_button.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
@@ -11,6 +12,7 @@ import '/flutter_flow/random_data_util.dart' as random_data;
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lottie/lottie.dart';
 import 'package:page_transition/page_transition.dart';
@@ -46,6 +48,23 @@ class _Chatapge2WidgetState extends State<Chatapge2Widget>
   late Chatapge2Model _model;
 
   final scaffoldKey = GlobalKey<ScaffoldState>();
+
+  final animationsMap = {
+    'textOnActionTriggerAnimation': AnimationInfo(
+      trigger: AnimationTrigger.onActionTrigger,
+      applyInitialState: true,
+      effects: [
+        ShakeEffect(
+          curve: Curves.easeIn,
+          delay: 0.ms,
+          duration: 1000.ms,
+          hz: 10,
+          offset: Offset(0.0, 0.0),
+          rotation: 0.087,
+        ),
+      ],
+    ),
+  };
 
   @override
   void initState() {
@@ -90,6 +109,13 @@ class _Chatapge2WidgetState extends State<Chatapge2Widget>
     });
 
     _model.fullNameController ??= TextEditingController();
+    setupAnimations(
+      animationsMap.values.where((anim) =>
+          anim.trigger == AnimationTrigger.onActionTrigger ||
+          !anim.applyInitialState),
+      this,
+    );
+
     WidgetsBinding.instance.addPostFrameCallback((_) => setState(() {}));
   }
 
@@ -232,6 +258,9 @@ class _Chatapge2WidgetState extends State<Chatapge2Widget>
                                                   fontWeight: FontWeight.bold,
                                                   useGoogleFonts: false,
                                                 ),
+                                          ).animateOnActionTrigger(
+                                            animationsMap[
+                                                'textOnActionTriggerAnimation']!,
                                           ),
                                         ),
                                       ],
@@ -1458,6 +1487,12 @@ class _Chatapge2WidgetState extends State<Chatapge2Widget>
                                                                       10)
                                                               .floor()),
                                                         ));
+                                                        logFirebaseEvent(
+                                                            'IconButton_lottie_animation');
+                                                        await lottieAnimationController
+                                                            .forward();
+                                                        lottieAnimationController
+                                                            .reset();
                                                       }
                                                       // updateChat
                                                       logFirebaseEvent(
@@ -1538,11 +1573,15 @@ class _Chatapge2WidgetState extends State<Chatapge2Widget>
                                                       curve: Curves.ease,
                                                     );
                                                     logFirebaseEvent(
-                                                        'IconButton_lottie_animation');
-                                                    await lottieAnimationController
-                                                        .forward();
-                                                    lottieAnimationController
-                                                        .reset();
+                                                        'IconButton_widget_animation');
+                                                    if (animationsMap[
+                                                            'textOnActionTriggerAnimation'] !=
+                                                        null) {
+                                                      await animationsMap[
+                                                              'textOnActionTriggerAnimation']!
+                                                          .controller
+                                                          .forward(from: 0.0);
+                                                    }
 
                                                     setState(() {});
                                                   },

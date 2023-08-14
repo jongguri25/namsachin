@@ -61,6 +61,11 @@ class CharacterRecord extends FirestoreRecord {
   int get order => _order ?? 0;
   bool hasOrder() => _order != null;
 
+  // "description" field.
+  String? _description;
+  String get description => _description ?? '';
+  bool hasDescription() => _description != null;
+
   void _initializeFields() {
     _name = snapshotData['name'] as String?;
     _profileImage = snapshotData['profile_image'] as String?;
@@ -71,6 +76,7 @@ class CharacterRecord extends FirestoreRecord {
     _song = snapshotData['song'] as String?;
     _uid = snapshotData['uid'] as String?;
     _order = castToType<int>(snapshotData['order']);
+    _description = snapshotData['description'] as String?;
   }
 
   static CollectionReference get collection =>
@@ -117,6 +123,7 @@ Map<String, dynamic> createCharacterRecordData({
   String? song,
   String? uid,
   int? order,
+  String? description,
 }) {
   final firestoreData = mapToFirestore(
     <String, dynamic>{
@@ -129,6 +136,7 @@ Map<String, dynamic> createCharacterRecordData({
       'song': song,
       'uid': uid,
       'order': order,
+      'description': description,
     }.withoutNulls,
   );
 
@@ -148,7 +156,8 @@ class CharacterRecordDocumentEquality implements Equality<CharacterRecord> {
         e1?.intorImage1 == e2?.intorImage1 &&
         e1?.song == e2?.song &&
         e1?.uid == e2?.uid &&
-        e1?.order == e2?.order;
+        e1?.order == e2?.order &&
+        e1?.description == e2?.description;
   }
 
   @override
@@ -161,7 +170,8 @@ class CharacterRecordDocumentEquality implements Equality<CharacterRecord> {
         e?.intorImage1,
         e?.song,
         e?.uid,
-        e?.order
+        e?.order,
+        e?.description
       ]);
 
   @override

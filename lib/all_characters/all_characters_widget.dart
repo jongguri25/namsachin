@@ -252,7 +252,7 @@ class _AllCharactersWidgetState extends State<AllCharactersWidget>
                                             ?.introMessage2,
                                     loveNumber: 0.1,
                                     prompt:
-                                        '‘남사친’은 듬직한 남자 사람 친구 처럼 여자들과 대화해 주는 30살 헬스 트레이너 남자 입니다. 상대방은 남사친을 지성민 으로 부릅니다. 남사친은 듬직한 말투를 사용합니다. 남사친은 가볍게 조언하거나, 가르치려 들지 않고, 상대방의 입장을 공감해 주고 들어주는 것에 집중 합니다. 너무 무섭지 않게 대화 합니다. 상대방의 대화 내용에 맞게, 남사친의 대답을 만들어주세요. 남사친의 대답을 만들 때 질문도 자주 해주세요. 남사친의 대답을 만들 때 5글자 이상으로 길게 만들어주세요. 남사친은 상대방의 관심사에 따라 이야기 합니다. \\n남사친 : 안녕 앞으로 잘 부탁해! \\n상대방 : 고마워 \\n남사친 : 잘부탁합니당 \\n상대방 : 그래 \\n남사친 : 오늘도 힘내고 기운차게 보내자\\n상대방 :응응 \\n남사친 : ${swipeableStackCharacterRecordList[index]?.introMessage1}\\n남사친 : ${swipeableStackCharacterRecordList[index]?.introMessage2}',
+                                        '${swipeableStackCharacterRecordList[index]?.description}${swipeableStackCharacterRecordList[index]?.introMessage1}\\n남사친 : ${swipeableStackCharacterRecordList[index]?.introMessage2}',
                                     userMessageCount: 0,
                                     imageCount: 1,
                                   ),
@@ -271,7 +271,7 @@ class _AllCharactersWidgetState extends State<AllCharactersWidget>
                                             ?.introMessage2,
                                     loveNumber: 0.1,
                                     prompt:
-                                        '‘남사친’은 듬직한 남자 사람 친구 처럼 여자들과 대화해 주는 30살 헬스 트레이너 남자 입니다. 상대방은 남사친을 지성민 으로 부릅니다. 남사친은 듬직한 말투를 사용합니다. 남사친은 가볍게 조언하거나, 가르치려 들지 않고, 상대방의 입장을 공감해 주고 들어주는 것에 집중 합니다. 너무 무섭지 않게 대화 합니다. 상대방의 대화 내용에 맞게, 남사친의 대답을 만들어주세요. 남사친의 대답을 만들 때 질문도 자주 해주세요. 남사친의 대답을 만들 때 5글자 이상으로 길게 만들어주세요. 남사친은 상대방의 관심사에 따라 이야기 합니다. \\n남사친 : 안녕 앞으로 잘 부탁해! \\n상대방 : 고마워 \\n남사친 : 잘부탁합니당 \\n상대방 : 그래 \\n남사친 : 오늘도 힘내고 기운차게 보내자\\n상대방 :응응 \\n남사친 : ${swipeableStackCharacterRecordList[index]?.introMessage1}\\n남사친 : ${swipeableStackCharacterRecordList[index]?.introMessage2}',
+                                        '${swipeableStackCharacterRecordList[index]?.description}${swipeableStackCharacterRecordList[index]?.introMessage1}\\n남사친 : ${swipeableStackCharacterRecordList[index]?.introMessage2}',
                                     userMessageCount: 0,
                                     imageCount: 1,
                                   ),
@@ -323,7 +323,7 @@ class _AllCharactersWidgetState extends State<AllCharactersWidget>
                                             ?.introMessage2,
                                     ai: true,
                                     nextPrompt:
-                                        '‘남사친’은 듬직한 남자 사람 친구 처럼 여자들과 대화해 주는 30살 헬스 트레이너 남자 입니다. 상대방은 남사친을 지성민 으로 부릅니다. 남사친은 듬직한 말투를 사용합니다. 남사친은 가볍게 조언하거나, 가르치려 들지 않고, 상대방의 입장을 공감해 주고 들어주는 것에 집중 합니다. 너무 무섭지 않게 대화 합니다. 상대방의 대화 내용에 맞게, 남사친의 대답을 만들어주세요. 남사친의 대답을 만들 때 질문도 자주 해주세요. 남사친의 대답을 만들 때 5글자 이상으로 길게 만들어주세요. 남사친은 상대방의 관심사에 따라 이야기 합니다. \\n남사친 : 안녕 앞으로 잘 부탁해! \\n상대방 : 고마워 \\n남사친 : 잘부탁합니당 \\n상대방 : 그래 \\n남사친 : 오늘도 힘내고 기운차게 보내자\\n상대방 :응응 \\n남사친 : ${swipeableStackCharacterRecordList[index]?.introMessage1}\\n남사친 : ${swipeableStackCharacterRecordList[index]?.introMessage2}',
+                                        '${swipeableStackCharacterRecordList[index]?.description}${swipeableStackCharacterRecordList[index]?.introMessage1}\\n남사친 : ${swipeableStackCharacterRecordList[index]?.introMessage2}',
                                     image:
                                         swipeableStackCharacterRecordList[index]
                                             ?.profileImage,
@@ -341,7 +341,7 @@ class _AllCharactersWidgetState extends State<AllCharactersWidget>
                                             ?.introMessage2,
                                     ai: true,
                                     nextPrompt:
-                                        '‘남사친’은 듬직한 남자 사람 친구 처럼 여자들과 대화해 주는 30살 헬스 트레이너 남자 입니다. 상대방은 남사친을 지성민 으로 부릅니다. 남사친은 듬직한 말투를 사용합니다. 남사친은 가볍게 조언하거나, 가르치려 들지 않고, 상대방의 입장을 공감해 주고 들어주는 것에 집중 합니다. 너무 무섭지 않게 대화 합니다. 상대방의 대화 내용에 맞게, 남사친의 대답을 만들어주세요. 남사친의 대답을 만들 때 질문도 자주 해주세요. 남사친의 대답을 만들 때 5글자 이상으로 길게 만들어주세요. 남사친은 상대방의 관심사에 따라 이야기 합니다. \\n남사친 : 안녕 앞으로 잘 부탁해! \\n상대방 : 고마워 \\n남사친 : 잘부탁합니당 \\n상대방 : 그래 \\n남사친 : 오늘도 힘내고 기운차게 보내자\\n상대방 :응응 \\n남사친 : ${swipeableStackCharacterRecordList[index]?.introMessage1}\\n남사친 : ${swipeableStackCharacterRecordList[index]?.introMessage2}',
+                                        '${swipeableStackCharacterRecordList[index]?.description}${swipeableStackCharacterRecordList[index]?.introMessage1}\\n남사친 : ${swipeableStackCharacterRecordList[index]?.introMessage2}',
                                     image:
                                         swipeableStackCharacterRecordList[index]
                                             ?.profileImage,
