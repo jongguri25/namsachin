@@ -1372,7 +1372,7 @@ class _Chatapge2WidgetState extends State<Chatapge2Widget>
                                                                 (_model.apiResult94f
                                                                         ?.jsonBody ??
                                                                     ''),
-                                                                r'''$''',
+                                                                r'''$.result.outputText''',
                                                               ).toString(),
                                                               random_data
                                                                   .randomDouble(
@@ -1418,7 +1418,7 @@ class _Chatapge2WidgetState extends State<Chatapge2Widget>
                                                                 (_model.apiResult94f
                                                                         ?.jsonBody ??
                                                                     ''),
-                                                                r'''$''',
+                                                                r'''$.result.outputText''',
                                                               ).toString(),
                                                               random_data
                                                                   .randomDouble(
