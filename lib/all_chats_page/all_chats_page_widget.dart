@@ -1,6 +1,7 @@
 import '/auth/base_auth_user_provider.dart';
 import '/auth/firebase_auth/auth_util.dart';
 import '/backend/backend.dart';
+import '/components/no_chat_widget.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import 'package:flutter/material.dart';
@@ -118,6 +119,9 @@ class _AllChatsPageWidgetState extends State<AllChatsPageWidget> {
                             }
                             List<ChatsRecord> listViewChatsRecordList =
                                 snapshot.data!;
+                            if (listViewChatsRecordList.isEmpty) {
+                              return NoChatWidget();
+                            }
                             return ListView.builder(
                               padding: EdgeInsets.zero,
                               shrinkWrap: true,

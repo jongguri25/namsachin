@@ -234,7 +234,7 @@ class _Chatapge2WidgetState extends State<Chatapge2Widget>
                                                 .override(
                                                   fontFamily: 'NIXGON',
                                                   color: Color(0xFFFDE500),
-                                                  fontSize: 22.0,
+                                                  fontSize: 26.0,
                                                   fontWeight: FontWeight.w500,
                                                   useGoogleFonts: false,
                                                 ),
@@ -250,12 +250,11 @@ class _Chatapge2WidgetState extends State<Chatapge2Widget>
                                               formatType: FormatType.percent,
                                             ),
                                             style: FlutterFlowTheme.of(context)
-                                                .headlineMedium
+                                                .headlineLarge
                                                 .override(
                                                   fontFamily: 'NIXGON',
                                                   color: Color(0xFFFDE500),
-                                                  fontSize: 22.0,
-                                                  fontWeight: FontWeight.bold,
+                                                  fontSize: 26.0,
                                                   useGoogleFonts: false,
                                                 ),
                                           ).animateOnActionTrigger(
